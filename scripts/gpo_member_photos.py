@@ -12,12 +12,11 @@ import os
 import re
 import sys
 import time
+import urllib
 import urlparse
 import yaml # pip install pyyaml
 
-# TODO: Cache downloaded member pages (see utils.download method)
-# TODO: Could download YAML directly when needed
-
+YAML_GIT = "https://raw2.github.com/unitedstates/congress-legislators/master/legislators-current.yaml"
 
 def pause(last, delay):
     if last == None:
@@ -129,10 +128,10 @@ def get_front_page(br, congress_number, delay):
         last_request_time = pause(last_request_time, delay)
         response = br.submit().read()
 
-        print 'href="' + congress_number in response
+        # print 'href="' + congress_number in response
         br.select_form(nr=0)
         form = br.form
-        print br['ctl00$ContentPlaceHolder1$ddlCongressSession']
+        # print br['ctl00$ContentPlaceHolder1$ddlCongressSession']
 
         last_page = this_page
         # Page number:
@@ -244,7 +243,7 @@ def download_photos(br, member_links, outdir, cachedir, delay):
         bioguide_id = None
 
         cachefile = os.path.join(cachedir, member_link.url.replace("/", "_") + ".html")
-        print os.path.isfile(cachefile)
+        # print os.path.isfile(cachefile)
         
         if os.path.isfile(cachefile):
             # Load page from cache
@@ -325,10 +324,10 @@ if __name__ == "__main__":
         help="Congress session number, for example: 110, 111, 112, 113")
     parser.add_argument('-c', '--cache', default='cache',
         help="Directory to cache member pages")
-    parser.add_argument('-o', '--outdir', default="images",
+    parser.add_argument('-o', '--outdir', default="congress/originals",
         help="Directory to save photos in")
     parser.add_argument('--yaml', default='legislators-current.yaml',
-        help="Path to the downloaded https://raw2.github.com/unitedstates/congress-legislators/master/legislators-current.yaml")
+        help="Path to a local legislators-current.yaml. If not found, will be downloaded.")
     parser.add_argument('-d', '--delay', type=int, default=5, metavar='seconds',
         help="Rate-limiting delay between scrape requests")
     parser.add_argument('-1', '--one-page', action='store_true',
@@ -337,6 +336,10 @@ if __name__ == "__main__":
         help="Test mode: don't actually save images")
     args = parser.parse_args()
 
+    if not os.path.isfile(args.yaml):
+        print "Downloading YAML from", YAML_GIT
+        urllib.urlretrieve(YAML_GIT, args.yaml)
+    
     br = mechanize.Browser()
     member_links = get_front_page(br, args.congress, args.delay)
     download_photos(br, member_links, args.outdir, args.cache, args.delay)
