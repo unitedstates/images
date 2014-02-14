@@ -1,7 +1,8 @@
 #!/bin/sh
 
 # Script to resize congress photos into the sizes we typically use.
-# Run this from a directory with photos in it, named by bioguide ID.
+# Run this from the root images directory: scripts/resize-photos.sh.
+# Directory congress/original contains images named by bioguide ID.
 # The photos will be resized and placed into directories named after the size, retaining their original filename.
 
 BASEDIR=congress
@@ -12,6 +13,9 @@ for SIZE in "40x50" "100x125" "200x250"
     for f in $BASEDIR/original/*.jpg
     do
         f=$(basename "$f")
-        convert $BASEDIR/original/$f -resize $SIZE^ -gravity center -extent $SIZE $BASEDIR/$SIZE/$f;
+        outfile=$BASEDIR/$SIZE/$f
+        if [ ! -f $outfile ]; then
+            convert $BASEDIR/original/$f -resize $SIZE^ -gravity center -extent $SIZE $outfile;
+        fi
     done
 done
