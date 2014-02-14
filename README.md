@@ -3,6 +3,24 @@
 Images of members of the US Congress.
 
 
+## Using the photos
+
+Photos are available at predictable URLs, by size and Bioguide ID. Photos are served using Github Pages.
+
+```
+http://theunitedstates.io/images/congress/[size]/[bioguide].jpg
+```
+
+`[size]` can be one of:
+
+* `original` - As originally downloaded. Typically, `589x719`, but no guarantees are made.
+* `200x250`
+* `100x125`
+* `40x50`
+
+`[bioguide]` must be a Bioguide ID. These are unique IDs for members of Congress, as defined by the [Congressional Bioguide](http://bioguide.congress.gov). They can be found and connected many other Congressional datasets, including the partner dataset over at [unitedstates/congress-legislators](https://github.com/unitedstates/congress-legislators).
+
+
 ## Gathering more photos
 
 This project uses a Python script that scrapes the [Government Printing Office's Member Guide](http://memberguide.gpo.gov/) for official photos of Members of Congress. You can run the script to find and fetch new
