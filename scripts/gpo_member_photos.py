@@ -259,20 +259,24 @@ def download_photos(br, member_links, outdir, cachedir, delay):
         cachefile = os.path.join(cachedir, member_link.url.replace("/", "_") + ".html")
         # print os.path.isfile(cachefile)
 
+        html = ""
+
         if os.path.isfile(cachefile):
             # Load page from cache
             with open(cachefile, "r") as f:
                 html = f.read()
-        else:
+
+        if len(html) == 0:
             # Open page with mechanize
             last_request_time = pause(last_request_time, delay)
             response = br.follow_link(member_link)
             print response.geturl()
             # print response.read()
             html = response.read()
-            # Save page to cache
-            with open(cachefile, "w") as f:
-                f.write(html)
+            if len(html) > 0:
+                # Save page to cache
+                with open(cachefile, "w") as f:
+                    f.write(html)
 
         soup = BeautifulSoup(html)
         for link in soup.findAll('a'):
