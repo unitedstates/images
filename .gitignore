@@ -51,5 +51,6 @@ coverage.xml
 # Sphinx documentation
 docs/_build/
 
-legislators-current.yaml
-cache/
+/legislators-current.yaml
+/cache/
+/congress-legislators

@@ -1,22 +1,23 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*- 
+# -*- coding: utf-8 -*-
 """
-Scrape http://www.memberguide.gpoaccess.gov and 
+Scrape http://www.memberguide.gpoaccess.gov and
 save members' photos named after their Bioguide IDs.
 """
 import argparse
-from BeautifulSoup import BeautifulSoup # pip install BeautifulSoup
 import datetime
-import mechanize # pip install mechanize
 import os
 import re
 import sys
 import time
 import urllib
 import urlparse
-import yaml # pip install pyyaml
 
-YAML_GIT = "https://raw2.github.com/unitedstates/congress-legislators/master/legislators-current.yaml"
+# pip install -r requirements.txt
+from BeautifulSoup import BeautifulSoup
+import mechanize
+import yaml
+
 
 def pause(last, delay):
     if last == None:
@@ -48,7 +49,7 @@ def get_front_page(br, congress_number, delay):
 
     if len(response) == 0:
         sys.exit("Page is blank. Try again later, you may have hit a limit.")
-    
+
     # print 'href="' + congress_number in response
     # print response
 
@@ -82,7 +83,7 @@ def get_front_page(br, congress_number, delay):
     # print br['ctl00$ContentPlaceHolder1$ddlCongressSession']
 
     # TODO: Could change members-per-page so we don't need to keep clicking next
-    
+
     #############################
     # Choose next page until done
     #############################
@@ -99,9 +100,9 @@ def get_front_page(br, congress_number, delay):
                     "/SR/" in link.url or
                     "/RC/" in link.url or
                     "/RP/" in link.url):
-                    # Include only delegates, a resident commissioner, 
+                    # Include only delegates, a resident commissioner,
                     # representatives and senators.
-                    # Exclude capitol, house and senate officials ("CO", "HO", "SO"), 
+                    # Exclude capitol, house and senate officials ("CO", "HO", "SO"),
                     # a president ("PR") and a vice-president ("VP") (8 in 113rd)
                     print link.text, link.url
                     links.append(link)
@@ -151,7 +152,7 @@ def load_yaml(filename):
 def remove_from_yaml(data, bioguide_id):
     data[:] = [d for d in data if d['id']['bioguide'] != bioguide_id]
     return data
-    
+
 def get_value(item, key1, key2):
     value = None
     if key2 in item[key1].keys():
@@ -206,6 +207,18 @@ def reverse_names(text):
     # Given names like "Hagan, Kay R.", reverse them to "Kay R. Hagan"
     return ' '.join(text.split(',')[::-1]).strip(" ")
 
+# Make sure we have the congress-legislators repository available.
+def download_legislator_data():
+    # clone it if it's not out
+    if not os.path.exists("congress-legislators"):
+        print "Cloning the congress-legislators repo..."
+        os.system("git clone -q --depth 1 https://github.com/unitedstates/congress-legislators congress-legislators")
+
+    # Update the repo so we have the latest.
+    print "Updating the congress-legislators repo..."
+    # these two == git pull, but git pull ignores -q on the merge part so is less quiet
+    os.system("cd congress-legislators; git fetch -pq; git merge --ff-only -q origin/master")
+
 def bioguide_id_from_url(url):
     bioguide_id = urlparse.parse_qs(urlparse.urlparse(url).query)['index'][0].strip("/")
     bioguide_id = bioguide_id.capitalize()
@@ -217,12 +230,12 @@ def bioguide_id_valid(bioguide_id):
 
     # A letter then six digits
     # For example C001061
-    
+
     # TODO: Is this specification correct?
     # Assume capital letter because ID finder will have uppercased it
     if re.match(r'[A-Z][0-9][0-9][0-9][0-9][0-9]', bioguide_id):
         return True
-    
+
     return False
 
 
@@ -244,7 +257,7 @@ def download_photos(br, member_links, outdir, cachedir, delay):
 
         cachefile = os.path.join(cachedir, member_link.url.replace("/", "_") + ".html")
         # print os.path.isfile(cachefile)
-        
+
         if os.path.isfile(cachefile):
             # Load page from cache
             with open(cachefile, "r") as f:
@@ -259,7 +272,7 @@ def download_photos(br, member_links, outdir, cachedir, delay):
             # Save page to cache
             with open(cachefile, "w") as f:
                 f.write(html)
-        
+
         soup = BeautifulSoup(html)
         for link in soup.findAll('a'):
             url = link.get('href')
@@ -278,7 +291,7 @@ def download_photos(br, member_links, outdir, cachedir, delay):
         if not bioguide_id:
             print "Bioguide ID not found in page, resolving"
             bioguide_id = resolve(legislators, member_link.text)
-            
+
             if not bioguide_id:
                 print "Bioguide ID not resolved"
                 todo_resolve.append(member_link)
@@ -287,7 +300,7 @@ def download_photos(br, member_links, outdir, cachedir, delay):
         if bioguide_id:
             print "Bioguide ID:", bioguide_id
             image_tags = soup.findAll('img')
-            
+
             # TODO: Fine for now as only one image on the page
             for image in image_tags:
                  # TODO: Correct to assume jpg?
@@ -303,7 +316,7 @@ def download_photos(br, member_links, outdir, cachedir, delay):
                     save.write(data)
                     save.close()
                 break
-            
+
             # Remove this from our YAML list to prevent any bad resolutions later
             legislators = remove_from_yaml(legislators, bioguide_id)
 
@@ -318,7 +331,7 @@ def download_photos(br, member_links, outdir, cachedir, delay):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="Scrape http://www.memberguide.gpoaccess.gov and save members' photos named after their Bioguide IDs", 
+        description="Scrape http://www.memberguide.gpoaccess.gov and save members' photos named after their Bioguide IDs",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('-n', '--congress', default='113',
         help="Congress session number, for example: 110, 111, 112, 113")
@@ -326,8 +339,6 @@ if __name__ == "__main__":
         help="Directory to cache member pages")
     parser.add_argument('-o', '--outdir', default="congress/originals",
         help="Directory to save photos in")
-    parser.add_argument('--yaml', default='legislators-current.yaml',
-        help="Path to a local legislators-current.yaml. If not found, will be downloaded.")
     parser.add_argument('-d', '--delay', type=int, default=5, metavar='seconds',
         help="Rate-limiting delay between scrape requests")
     parser.add_argument('-1', '--one-page', action='store_true',
@@ -336,12 +347,12 @@ if __name__ == "__main__":
         help="Test mode: don't actually save images")
     args = parser.parse_args()
 
-    if not os.path.isfile(args.yaml):
-        print "Downloading YAML from", YAML_GIT
-        urllib.urlretrieve(YAML_GIT, args.yaml)
-    
+    # clone or update legislator YAML
+    download_legislator_data()
+
     br = mechanize.Browser()
     member_links = get_front_page(br, args.congress, args.delay)
+
     download_photos(br, member_links, args.outdir, args.cache, args.delay)
 
 # End of file
