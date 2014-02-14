@@ -328,6 +328,9 @@ def download_photos(br, member_links, outdir, cachedir, delay):
         print member_link.text, member_link.url
 
 
+def resize_photos():
+    # Assumes they're congress/original/*.jpg
+    os.system("scripts/resize-photos.sh")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -337,7 +340,7 @@ if __name__ == "__main__":
         help="Congress session number, for example: 110, 111, 112, 113")
     parser.add_argument('-c', '--cache', default='cache',
         help="Directory to cache member pages")
-    parser.add_argument('-o', '--outdir', default="congress/originals",
+    parser.add_argument('-o', '--outdir', default="congress/original",
         help="Directory to save photos in")
     parser.add_argument('-d', '--delay', type=int, default=5, metavar='seconds',
         help="Rate-limiting delay between scrape requests")
@@ -354,5 +357,7 @@ if __name__ == "__main__":
     member_links = get_front_page(br, args.congress, args.delay)
 
     download_photos(br, member_links, args.outdir, args.cache, args.delay)
+
+    resize_photos()
 
 # End of file
