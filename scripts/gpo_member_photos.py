@@ -163,10 +163,11 @@ def resolve(data, text):
     if isinstance(text, str):
         text = text.decode('utf-8')
 
-    # Special cases hardcoded
-    # Really "Byrne, Bradley" but GPO has bad data
-    if text == "Bradley, Byrne":
+    # hardcoded special cases to deal with bad data in GPO
+    if text == "Bradley, Byrne": # Really "Byrne, Bradley"
         return "B001289"
+    elif text == "Curzon, David Alan": # Really "Curzon, David Alan"
+        return "C001089"
 
     for item in data:
         bioguide = item['id']['bioguide']
