@@ -38,6 +38,17 @@ Run the script with:
 ```
 
 
+## Contributing other photos
+
+If GPO doesn't have a photo for someone in their member guide, we may be willing to accept a photo from another source.
+
+In this case, [open a ticket](/unitedstates/images/issues/new), and include:
+
+* The name and Bioguide ID of the member of Congress.
+* A link to the image you're suggesting we incorporate, and to a page that displays that image.
+* Why you believe the image is definitely official and in the public domain.
+
+
 ## Public domain
 
 The photos of members of Congress are from the Government Printing Office, which [has assured Public Knowledge's Michael Weinberg that all photos are public domain](https://github.com/sunlightlabs/congress/issues/432#issuecomment-34481338).
