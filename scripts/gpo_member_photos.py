@@ -248,7 +248,7 @@ def download_photos(br, member_links, outdir, cachedir, delay):
         os.makedirs(cachedir)
 
     todo_resolve = []
-    legislators = load_yaml(args.yaml)
+    legislators = load_yaml("congress-legislators/legislators-current.yaml")
 
     for i, member_link in enumerate(member_links):
         print "---"
