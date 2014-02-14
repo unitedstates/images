@@ -1,10 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*- 
 """
-Unit tests for gpo_member_photos.py
+Unit tests for gpo_member_photos.py.
+Run from root `images` dir:
+`python test/test_gpo_member_photos.py`
 """
-import gpo_member_photos
+import sys
 import unittest
+
+sys.path.insert(0, 'scripts')
+import gpo_member_photos
 
 class TestSequenceFunctions(unittest.TestCase):
 
@@ -12,7 +17,7 @@ class TestSequenceFunctions(unittest.TestCase):
 
     def setUp(self):
         if self.yaml_data is None:
-            self.__class__.yaml_data = gpo_member_photos.load_yaml("legislators-test.yaml")
+            self.__class__.yaml_data = gpo_member_photos.load_yaml("test/legislators-test.yaml")
             self.assertTrue(len(self.yaml_data))
 
 
