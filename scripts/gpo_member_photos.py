@@ -240,6 +240,16 @@ def bioguide_id_valid(bioguide_id):
     return False
 
 
+def save_metadata(bioguide_id):
+    outdir = "metadata"
+    if not os.path.exists(outdir):
+        os.makedirs(outdir)
+    outfile = os.path.join(outdir, bioguide_id + ".yaml")
+    with open(outfile, "w") as f:
+        f.write("name: GPO Member Guide\n")
+        f.write("link: http://memberguide.gpo.gov\n")
+
+
 def download_photos(br, member_links, outdir, cachedir, delay):
     last_request_time = None
     print "Found a total of", len(member_links), "member links"
@@ -320,6 +330,7 @@ def download_photos(br, member_links, outdir, cachedir, delay):
                     save = open(filename, 'wb')
                     save.write(data)
                     save.close()
+                    save_metadata(bioguide_id)
                 break
 
             # Remove this from our YAML list to prevent any bad resolutions later
