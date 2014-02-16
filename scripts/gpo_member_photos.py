@@ -241,7 +241,7 @@ def bioguide_id_valid(bioguide_id):
 
 
 def save_metadata(bioguide_id):
-    outdir = "metadata"
+    outdir = "congress/metadata"
     if not os.path.exists(outdir):
         os.makedirs(outdir)
     outfile = os.path.join(outdir, bioguide_id + ".yaml")
