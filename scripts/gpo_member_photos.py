@@ -166,7 +166,7 @@ def resolve(data, text):
     # hardcoded special cases to deal with bad data in GPO
     if text == "Bradley, Byrne": # Really "Byrne, Bradley"
         return "B001289"
-    elif text == "Curzon, David Alan": # Really "Curzon, David Alan"
+    elif text == "Curson, David Alan": # Really "Curzon, David Alan"
         return "C001089"
 
     for item in data:
