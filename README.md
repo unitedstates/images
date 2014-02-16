@@ -13,7 +13,7 @@ http://theunitedstates.io/images/congress/[size]/[bioguide].jpg
 
 `[size]` can be one of:
 
-* `original` - As originally downloaded. Typically, `589x719`, but no guarantees are made.
+* `original` - As originally downloaded. Typically, `675x825`, but [it can vary](https://github.com/unitedstates/images/issues/1#issuecomment-35070231).
 * `200x250`
 * `100x125`
 * `40x50`
