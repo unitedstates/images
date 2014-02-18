@@ -14,16 +14,15 @@ http://theunitedstates.io/images/congress/[size]/[bioguide].jpg
 `[size]` can be one of:
 
 * `original` - As originally downloaded. Typically, `675x825`, but [it can vary](https://github.com/unitedstates/images/issues/1#issuecomment-35070231).
-* `200x250`
-* `100x125`
-* `40x50`
+* `450x550`
+* `225x275`
 
-`[bioguide]` must be a Bioguide ID. These are unique IDs for members of Congress, as defined by the [Congressional Bioguide](http://bioguide.congress.gov). They can be found and connected many other Congressional datasets, including the partner dataset over at [unitedstates/congress-legislators](https://github.com/unitedstates/congress-legislators).
+`[bioguide]` must be a Bioguide ID. These are unique IDs for members of Congress, as defined by the [Congressional Bioguide](http://bioguide.congress.gov). They can be found and connected to many other Congressional datasets, including the partner dataset over at [unitedstates/congress-legislators](https://github.com/unitedstates/congress-legislators).
 
 
 ## Gathering more photos
 
-This project uses a Python script that scrapes the [Government Printing Office's Member Guide](http://memberguide.gpo.gov/) for official photos of Members of Congress. You can run the script to find and fetch new
+This project uses a Python script that scrapes the [Government Printing Office's Member Guide](http://memberguide.gpo.gov/) for official photos of Members of Congress. You can run the script to find and fetch new photos.
 
 Install dependencies with:
 
