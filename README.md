@@ -1,6 +1,4 @@
-## US Images
-
-Images of members of the US Congress.
+Public domain images of members of the US Congress.
 
 
 ## Using the photos
