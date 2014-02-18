@@ -20,6 +20,14 @@ http://theunitedstates.io/images/congress/[size]/[bioguide].jpg
 `[bioguide]` must be a Bioguide ID. These are unique IDs for members of Congress, as defined by the [Congressional Bioguide](http://bioguide.congress.gov). They can be found and connected to many other Congressional datasets, including the partner dataset over at [unitedstates/congress-legislators](https://github.com/unitedstates/congress-legislators).
 
 
+### As a zip file
+
+You can also grab the whole repository as a zip file:
+
+> [https://github.com/unitedstates/images/archive/gh-pages.zip](https://github.com/unitedstates/images/archive/gh-pages.zip)
+
+This will also include the scripts, README, etc., but the images wil be in the `congress` directory at the same predictable paths seen in the URLs.
+
 ## Gathering more photos
 
 This project uses a Python script that scrapes the [Government Printing Office's Member Guide](http://memberguide.gpo.gov/) for official photos of Members of Congress. You can run the script to find and fetch new photos.
@@ -50,7 +58,7 @@ In this case, [open a ticket](/unitedstates/images/issues/new), and include:
 
 ## Public domain
 
-The photos of members of Congress are from the Government Printing Office, which [has assured Public Knowledge's Michael Weinberg that all photos are public domain](https://github.com/sunlightlabs/congress/issues/432#issuecomment-34481338).
+The photos of members of Congress are from the Government Printing Office, which [has assured us that all photos are public domain](https://github.com/sunlightlabs/congress/issues/432#issuecomment-34481338).
 
 All other files in this project are [dedicated to the public domain](LICENSE). As spelled out in [CONTRIBUTING](CONTRIBUTING.md):
 
