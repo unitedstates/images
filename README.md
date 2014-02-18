@@ -41,7 +41,7 @@ Run the script with:
 
 If GPO doesn't have a photo for someone in their member guide, we may be willing to accept a photo from another source.
 
-In this case, [open a ticket](/unitedstates/images/issues/new), and include:
+In this case, [open a ticket](https://github.com/unitedstates/images/issues/new), and include:
 
 * The name and Bioguide ID of the member of Congress.
 * A link to the image you're suggesting we incorporate, and to a page that displays that image.
