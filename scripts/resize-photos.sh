@@ -7,7 +7,7 @@
 
 BASEDIR=congress
 
-for SIZE in "40x50" "100x125" "200x250"
+for SIZE in "225x275" "450x550"
     do
     mkdir $BASEDIR/$SIZE;
     for f in $BASEDIR/original/*.jpg
