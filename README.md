@@ -19,6 +19,8 @@ http://theunitedstates.io/images/congress/[size]/[bioguide].jpg
 
 `[bioguide]` must be a Bioguide ID. These are unique IDs for members of Congress, as defined by the [Congressional Bioguide](http://bioguide.congress.gov). They can be found and connected to many other Congressional datasets, including the partner dataset over at [unitedstates/congress-legislators](https://github.com/unitedstates/congress-legislators).
 
+We **cannot provide HTTPS permalinks** for these images, as Github Pages does not support SSL. If you want to use these images on your website and worry about showing your users mixed content warnings, you'll need to host our images elsewhere. If this seems weird to you, [write Github support](mailto:support@github.com) to request SSL support for Github Pages.
+
 
 ## Gathering more photos
 
