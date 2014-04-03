@@ -14,7 +14,7 @@ import urllib
 import urlparse
 
 # pip install -r requirements.txt
-from BeautifulSoup import BeautifulSoup
+from bs4 import BeautifulSoup
 import mechanize
 import yaml
 
@@ -346,7 +346,7 @@ def download_photos(br, member_links, outdir, cachedir, delay):
 
 def resize_photos():
     # Assumes they're congress/original/*.jpg
-    os.system("scripts/resize-photos.sh")
+    os.system(os.path.join("scripts", "resize-photos.sh"))
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
