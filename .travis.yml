@@ -8,6 +8,12 @@ python:
   - 3.4
   - pypy
 
+# whitelist
+# gh-pages is otherwise ignored by Travis CI
+branches:
+  only:
+    - gh-pages
+
 script:
   - coverage run --source scripts/gpo_member_photos.py test/test_gpo_member_photos.py
 
