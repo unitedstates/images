@@ -1,0 +1,26 @@
+language: python
+
+python:
+  - 2.6
+  - 2.7
+  - 3.2
+  - 3.3
+  - 3.4
+  - pypy
+
+script:
+  - coverage run --source scripts/gpo_member_photos.py test/test_gpo_member_photos.py
+
+after_success:
+  - coverage report
+  - coveralls
+  - pep8 scripts/*.py
+  - pyflakes scripts/*.py
+
+matrix:
+  allow_failures:
+    - python: 2.6
+    - python: 3.2
+    - python: 3.3
+    - python: 3.4
+    - python: pypy
