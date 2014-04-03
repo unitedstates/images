@@ -1,0 +1,38 @@
+language: python
+
+python:
+  - 2.6
+  - 2.7
+  - 3.2
+  - 3.3
+  - 3.4
+  - pypy
+
+# whitelist
+# gh-pages is otherwise ignored by Travis CI
+branches:
+  only:
+    - gh-pages
+
+install:
+  - pip install -r requirements.txt
+  - pip install coveralls
+
+script:
+  - coverage run --source scripts/gpo_member_photos.py test/test_gpo_member_photos.py
+  - python scripts/missing.py
+
+after_success:
+  - coverage report
+  - coveralls
+  - pip install pep8 pyflakes
+  - pep8 scripts/*.py
+  - pyflakes scripts/*.py
+
+matrix:
+  allow_failures:
+    - python: 2.6
+    - python: 3.2
+    - python: 3.3
+    - python: 3.4
+    - python: pypy

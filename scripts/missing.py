@@ -10,7 +10,8 @@ if __name__ == "__main__":
     # clone or update legislator YAML
     gpo_member_photos.download_legislator_data()
 
-    legislators = gpo_member_photos.load_yaml("congress-legislators/legislators-current.yaml")
+    legislators = gpo_member_photos.load_yaml(
+        "congress-legislators/legislators-current.yaml")
     for l in legislators:
         bioguide = l['id']['bioguide']
         filename = os.path.join("congress", "original", bioguide + ".jpg")

@@ -10,17 +10,16 @@ import os
 import re
 import sys
 import time
-import urllib
 import urlparse
 
 # pip install -r requirements.txt
-from BeautifulSoup import BeautifulSoup
+from bs4 import BeautifulSoup
 import mechanize
 import yaml
 
 
 def pause(last, delay):
-    if last == None:
+    if last is None:
         return datetime.datetime.now()
 
     now = datetime.datetime.now()
@@ -31,6 +30,7 @@ def pause(last, delay):
         print "Sleep for", int(sleep), "seconds"
         time.sleep(sleep)
     return datetime.datetime.now()
+
 
 def get_front_page(br, congress_number, delay):
     url = r'http://www.memberguide.gpoaccess.gov/GetMembersSearch.aspx'
@@ -68,10 +68,11 @@ def get_front_page(br, congress_number, delay):
             break
 
     # The search button is hooked up to a Javascript __doPostBack() function that sets __EVENTTARGET
-    br['__EVENTTARGET']='ctl00$ContentPlaceHolder1$btnSearch'
+    br['__EVENTTARGET'] = 'ctl00$ContentPlaceHolder1$btnSearch'
 
     # Set the congress session number
-    br['ctl00$ContentPlaceHolder1$ddlCongressSession']=[congress_number] # Use a list for select controls with multiple values
+    # Use a list for select controls with multiple values:
+    br['ctl00$ContentPlaceHolder1$ddlCongressSession'] = [congress_number]
 
     print "Submit congress session number:", congress_number
     last_request_time = pause(last_request_time, delay)
@@ -123,7 +124,7 @@ def get_front_page(br, congress_number, delay):
                 break
 
         # The search button is hooked up to a Javascript __doPostBack() function that sets __EVENTTARGET
-        br['__EVENTTARGET']='ctl00$ContentPlaceHolder1$Memberstelerikrid$ctl00$ctl02$ctl00$ctl28'
+        br['__EVENTTARGET'] = 'ctl00$ContentPlaceHolder1$Memberstelerikrid$ctl00$ctl02$ctl00$ctl28'
 
         print "Submit next page..."
         last_request_time = pause(last_request_time, delay)
@@ -143,15 +144,18 @@ def get_front_page(br, congress_number, delay):
     ###########################################
     return links
 
+
 def load_yaml(filename):
     f = open(filename)
     data = yaml.safe_load(f)
     f.close()
     return data
 
+
 def remove_from_yaml(data, bioguide_id):
     data[:] = [d for d in data if d['id']['bioguide'] != bioguide_id]
     return data
+
 
 def get_value(item, key1, key2):
     value = None
@@ -159,14 +163,15 @@ def get_value(item, key1, key2):
         value = item[key1][key2]
     return value
 
+
 def resolve(data, text):
     if isinstance(text, str):
         text = text.decode('utf-8')
 
     # hardcoded special cases to deal with bad data in GPO
-    if text == "Bradley, Byrne": # Really "Byrne, Bradley"
+    if text == "Bradley, Byrne":  # Really "Byrne, Bradley"
         return "B001289"
-    elif text == "Curson, David Alan": # Really "Curzon, David Alan"
+    elif text == "Curson, David Alan":  # Really "Curzon, David Alan"
         return "C001089"
 
     for item in data:
@@ -204,9 +209,11 @@ def resolve(data, text):
 
     return None
 
+
 def reverse_names(text):
     # Given names like "Hagan, Kay R.", reverse them to "Kay R. Hagan"
     return ' '.join(text.split(',')[::-1]).strip(" ")
+
 
 # Make sure we have the congress-legislators repository available.
 def download_legislator_data():
@@ -220,10 +227,12 @@ def download_legislator_data():
     # these two == git pull, but git pull ignores -q on the merge part so is less quiet
     os.system("cd congress-legislators; git fetch -pq; git merge --ff-only -q origin/master")
 
+
 def bioguide_id_from_url(url):
     bioguide_id = urlparse.parse_qs(urlparse.urlparse(url).query)['index'][0].strip("/")
     bioguide_id = bioguide_id.capitalize()
     return bioguide_id
+
 
 def bioguide_id_valid(bioguide_id):
     if not bioguide_id:
@@ -318,7 +327,7 @@ def download_photos(br, member_links, outdir, cachedir, delay):
 
             # TODO: Fine for now as only one image on the page
             for image in image_tags:
-                 # TODO: Correct to assume jpg?
+                # TODO: Correct to assume jpg?
                 filename = os.path.join(outdir, bioguide_id + ".jpg")
                 if os.path.isfile(filename):
                     print "Image already exists:", filename
@@ -346,23 +355,29 @@ def download_photos(br, member_links, outdir, cachedir, delay):
 
 def resize_photos():
     # Assumes they're congress/original/*.jpg
-    os.system("scripts/resize-photos.sh")
+    os.system(os.path.join("scripts", "resize-photos.sh"))
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Scrape http://www.memberguide.gpoaccess.gov and save members' photos named after their Bioguide IDs",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument('-n', '--congress', default='113',
+    parser.add_argument(
+        '-n', '--congress', default='113',
         help="Congress session number, for example: 110, 111, 112, 113")
-    parser.add_argument('-c', '--cache', default='cache',
+    parser.add_argument(
+        '-c', '--cache', default='cache',
         help="Directory to cache member pages")
-    parser.add_argument('-o', '--outdir', default="congress/original",
+    parser.add_argument(
+        '-o', '--outdir', default="congress/original",
         help="Directory to save photos in")
-    parser.add_argument('-d', '--delay', type=int, default=5, metavar='seconds',
+    parser.add_argument(
+        '-d', '--delay', type=int, default=5, metavar='seconds',
         help="Rate-limiting delay between scrape requests")
-    parser.add_argument('-1', '--one-page', action='store_true',
+    parser.add_argument(
+        '-1', '--one-page', action='store_true',
         help="Only process the first page of results (for testing)")
-    parser.add_argument('-t', '--test', action='store_true',
+    parser.add_argument(
+        '-t', '--test', action='store_true',
         help="Test mode: don't actually save images")
     args = parser.parse_args()
 
