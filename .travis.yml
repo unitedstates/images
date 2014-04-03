@@ -20,7 +20,7 @@ install:
 
 script:
   - coverage run --source scripts/gpo_member_photos.py test/test_gpo_member_photos.py
-  - scripts/missing.py
+  - python scripts/missing.py
 
 after_success:
   - coverage report
