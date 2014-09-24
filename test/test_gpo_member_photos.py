@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*- 
+# -*- coding: utf-8 -*-
 """
 Unit tests for gpo_member_photos.py.
 Run from root `images` dir:
@@ -39,13 +39,20 @@ class TestSequenceFunctions(unittest.TestCase):
         """ Test output is string """
         input = "http://bioguide.congress.gov/scripts/biodisplay.pl?index=S001177/"
         output = gpo_member_photos.bioguide_id_from_url(input)
-        self.assertTrue(isinstance(output, str))
+        self.assertIsInstance(output, str)
 
     def test_bioguide_id_from_url__uppercase(self):
         """ Test output is string """
         input = "http://bioguide.congress.gov/scripts/biodisplay.pl?index=e000288/"
         output = gpo_member_photos.bioguide_id_from_url(input)
         self.assertEqual(output[0], "E")
+
+    def test_bioguide_id_from_url_with_ltr_mark(self):
+        """ For some reason, some new URL links end with
+        Unicode Character 'LEFT-TO-RIGHT MARK' (U+200E) """
+        input = "http://bioguide.congress.gov/scripts/biodisplay.pl?index=g000386" + u"\u200E" + "/"
+        output = gpo_member_photos.bioguide_id_from_url(input)
+        self.assertEqual(output, "G000386")
 
 
     # Test bioguide_id_valid()
@@ -87,11 +94,11 @@ class TestSequenceFunctions(unittest.TestCase):
         """ Test smaller after remove """
         bioguide_id = "C000127"
         length_before = len(self.yaml_data)
-        
+
         self.yaml_data = gpo_member_photos.remove_from_yaml(self.yaml_data, bioguide_id)
         self.assertTrue(length_before > len(self.yaml_data))
         self.assertEqual(len(self.yaml_data) + 1, length_before)
-        
+
     def test_remove_from_yaml__not_found(self):
         """ Test same size """
         bioguide_id = "NOT_THERE"
@@ -116,25 +123,25 @@ class TestSequenceFunctions(unittest.TestCase):
         text = "Alexander, Lamar"
         output = gpo_member_photos.resolve(self.yaml_data, text)
         self.assertEqual(output, "A000360")
-        
+
     def test_resolve__exact_match_last_first_middle(self):
         """ Test resolve """
         text = "Amodei, Mark E."
         output = gpo_member_photos.resolve(self.yaml_data, text)
         self.assertEqual(output, "A000369")
-        
+
     def test_resolve__exact_match_last_nickname(self):
         """ Test resolve """
         text = "Isakson, Johnny"
         output = gpo_member_photos.resolve(self.yaml_data, text)
         self.assertEqual(output, "I000055")
-        
+
     def test_resolve__with_accented_chars(self):
         """ Test resolve """
         text = u"Velázquez, Nydia M."
         output = gpo_member_photos.resolve(self.yaml_data, text)
         self.assertEqual(output, "V000081")
-        
+
     def test_resolve__initial_dot_from_middle(self):
         """ Test resolve """
         text = "Kirk, Mark S."

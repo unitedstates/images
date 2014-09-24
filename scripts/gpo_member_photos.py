@@ -18,6 +18,10 @@ import mechanize
 import yaml
 
 
+# Windows cmd.exe cannot do Unicode so encode first
+def print_it(text):
+    print(text.encode('utf-8'))
+
 def pause(last, delay):
     if last is None:
         return datetime.datetime.now()
@@ -230,6 +234,7 @@ def download_legislator_data():
 
 def bioguide_id_from_url(url):
     bioguide_id = urlparse.parse_qs(urlparse.urlparse(url).query)['index'][0].strip("/")
+    bioguide_id = str(bioguide_id.strip(u"\u200E"))
     bioguide_id = bioguide_id.capitalize()
     return bioguide_id
 
@@ -301,7 +306,7 @@ def download_photos(br, member_links, outdir, cachedir, delay):
         for link in soup.findAll('a'):
             url = link.get('href')
             if "bioguide.congress.gov" in url:
-                print url
+                print_it(url)
                 bioguide_id = bioguide_id_from_url(url)
 
                 # Validate Bioguide ID
