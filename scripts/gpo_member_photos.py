@@ -17,7 +17,7 @@ import json
 from bs4 import BeautifulSoup
 import mechanize
 import yaml
-
+from urllib2 import HTTPError
 
 # Windows cmd.exe cannot do Unicode so encode first
 def print_it(text):
@@ -224,14 +224,18 @@ def download_photos(br, member_links, outdir, cachedir, delay):
         if len(html) == 0:
             # Open page with mechanize
             last_request_time = pause(last_request_time, delay)
-            response = br.open(member_link["img_url"])
-            print member_link["img_url"]
-            # print response.read()
-            html = response.read()
-            if len(html) > 0:
-                # Save page to cache
-                with open(cachefile, "w") as f:
-                    f.write(html)
+            try:
+                response = br.open(member_link["img_url"])
+            except HTTPError:
+                pass
+            else:
+                print member_link["img_url"]
+                # print response.read()
+                html = response.read()
+                if len(html) > 0:
+                    # Save page to cache
+                    with open(cachefile, "w") as f:
+                        f.write(html)
 
         # Resolve Bioguide ID against congress-legislators data
         # all IDs now have to be resolved, but names seem more consistent
@@ -254,11 +258,15 @@ def download_photos(br, member_links, outdir, cachedir, delay):
             elif not args.test:
                 print "Saving image to", filename
                 last_request_time = pause(last_request_time, delay)
-                data = br.open(member_link['img_url']).read()
-                save = open(filename, 'wb')
-                save.write(data)
-                save.close()
-                save_metadata(bioguide_id)
+                try:
+                    data = br.open(member_link['img_url']).read()
+                except HTTPError:
+                    print "Image not available"
+                else:
+                    save = open(filename, 'wb')
+                    save.write(data)
+                    save.close()
+                    save_metadata(bioguide_id)
 
         # Remove this from our YAML list to prevent any bad resolutions later
         legislators = remove_from_yaml(legislators, bioguide_id)
