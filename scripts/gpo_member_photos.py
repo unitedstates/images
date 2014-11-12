@@ -11,12 +11,13 @@ import re
 import sys
 import time
 import urlparse
+import json
 
 # pip install -r requirements.txt
 from bs4 import BeautifulSoup
 import mechanize
 import yaml
-
+from urllib2 import HTTPError
 
 # Windows cmd.exe cannot do Unicode so encode first
 def print_it(text):
@@ -37,7 +38,11 @@ def pause(last, delay):
 
 
 def get_front_page(br, congress_number, delay):
-    url = r'http://www.memberguide.gpoaccess.gov/GetMembersSearch.aspx'
+    
+    print "Submit congress session number:", congress_number
+
+    #the JSON used to populate the memberguide site
+    url = r'http://www.memberguide.gpoaccess.gov/Congressional.svc/GetMembers/{0}'.format(congress_number)
     links = []
 
     ######################################
@@ -47,105 +52,31 @@ def get_front_page(br, congress_number, delay):
     br.set_handle_refresh(False)  # can sometimes hang without this
     br.addheaders = [('User-agent', 'Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.0.1) Gecko/2008071615 Fedora/3.0.1-1.fc9 Firefox/3.0.1')]
 
-    print "Open front page:", url
-    last_request_time = datetime.datetime.now()
+    
     response = br.open(url).read()
 
     if len(response) == 0:
         sys.exit("Page is blank. Try again later, you may have hit a limit.")
 
-    # print 'href="' + congress_number in response
-    # print response
-
-    ##############################
-    # Next, choose congress number
-    ##############################
-    br.select_form(nr=0)
-    br.set_all_readonly(False)      # allow everything to be written to
-    form = br.form
-    form.set_all_readonly(False)    # allow everything to be written to
-
-    # The only submit button is "Clear Search" and we don't want to do that!
-    for control in br.form.controls:
-        if control.name == "ctl00$ContentPlaceHolder1$btnClear":
-            control.disabled = True
-            break
-
-    # The search button is hooked up to a Javascript __doPostBack() function that sets __EVENTTARGET
-    br['__EVENTTARGET'] = 'ctl00$ContentPlaceHolder1$btnSearch'
-
-    # Set the congress session number
-    # Use a list for select controls with multiple values:
-    br['ctl00$ContentPlaceHolder1$ddlCongressSession'] = [congress_number]
-
-    print "Submit congress session number:", congress_number
-    last_request_time = pause(last_request_time, delay)
-    response = br.submit().read()
-
-    # print 'href="' + congress_number in response
-    br.select_form(nr=0)
-    form = br.form
-    # print br['ctl00$ContentPlaceHolder1$ddlCongressSession']
-
-    # TODO: Could change members-per-page so we don't need to keep clicking next
-
-    #############################
-    # Choose next page until done
-    #############################
-    last_page = None
-    # Page number:
-    this_page = br['ctl00$ContentPlaceHolder1$Memberstelerikrid$ctl00$ctl03$ctl01$GoToPageTextBox']
-
-    while(last_page != this_page):
-
-        # Harvest links
-        for link in br.links():
-            if congress_number + "/" in link.url:
-                if ("/DG/" in link.url or
-                    "/SR/" in link.url or
-                    "/RC/" in link.url or
-                    "/RP/" in link.url):
-                    # Include only delegates, a resident commissioner,
-                    # representatives and senators.
-                    # Exclude capitol, house and senate officials ("CO", "HO", "SO"),
-                    # a president ("PR") and a vice-president ("VP") (8 in 113rd)
-                    print link.text, link.url
-                    links.append(link)
-        print "Links:", len(links)
-
-        if args.one_page:
-            return links
-
-        br.select_form(nr=0)
-        br.set_all_readonly(False)      # allow everything to be written to
-        form = br.form
-        form.set_all_readonly(False)    # allow everything to be written to
-
-        # The only submit button is "Clear Search" and we don't want to do that!
-        for control in br.form.controls:
-            if control.name == "ctl00$ContentPlaceHolder1$btnClear":
-                control.disabled = True
-                break
-
-        # The search button is hooked up to a Javascript __doPostBack() function that sets __EVENTTARGET
-        br['__EVENTTARGET'] = 'ctl00$ContentPlaceHolder1$Memberstelerikrid$ctl00$ctl02$ctl00$ctl28'
-
-        print "Submit next page..."
-        last_request_time = pause(last_request_time, delay)
-        response = br.submit().read()
-
-        # print 'href="' + congress_number in response
-        br.select_form(nr=0)
-        form = br.form
-        # print br['ctl00$ContentPlaceHolder1$ddlCongressSession']
-
-        last_page = this_page
-        # Page number:
-        this_page = br['ctl00$ContentPlaceHolder1$Memberstelerikrid$ctl00$ctl03$ctl01$GoToPageTextBox']
-
-    ###########################################
-    # Done, return links for further processing
-    ###########################################
+    data = json.loads(response)
+    for entry in data:
+        link = entry["ImageUrl"]
+        name = entry["LastName"] + ", " + entry["FirstName"]
+        if congress_number in link:
+            if ("DG" in link or
+                "SR" in link or
+                "RC" in link or
+                "RP" in link):
+                # Include only delegates, a resident commissioner,
+                # representatives and senators.
+                # Exclude capitol, house and senate officials ("CO", "HO", "SO"),
+                # a president ("PR") and a vice-president ("VP") (8 in 113rd)
+                links.append({"img_url":link,"name":name})
+                #links will be a list of dictionaries
+                #where the "url" is a link to the image and "name" is the rep's name
+                
+                
+    print "Links:", len(links)
     return links
 
 
@@ -177,6 +108,9 @@ def resolve(data, text):
         return "B001289"
     elif text == "Curson, David Alan":  # Really "Curzon, David Alan"
         return "C001089"
+    elif text == "Gutierrez, Luis": # missing accent in lastname
+	return "G000535"
+
 
     for item in data:
         bioguide = item['id']['bioguide']
@@ -277,10 +211,10 @@ def download_photos(br, member_links, outdir, cachedir, delay):
 
     for i, member_link in enumerate(member_links):
         print "---"
-        print "Processing member", i+1, "of", len(member_links), ":", member_link.text
+        print "Processing member", i+1, "of", len(member_links), ":", member_link["name"].encode('latin-1')
         bioguide_id = None
 
-        cachefile = os.path.join(cachedir, member_link.url.replace("/", "_") + ".html")
+        cachefile = os.path.join(cachedir, member_link["img_url"].replace("/", "_") + ".html")
         # print os.path.isfile(cachefile)
 
         html = ""
@@ -293,33 +227,23 @@ def download_photos(br, member_links, outdir, cachedir, delay):
         if len(html) == 0:
             # Open page with mechanize
             last_request_time = pause(last_request_time, delay)
-            response = br.follow_link(member_link)
-            print response.geturl()
-            # print response.read()
-            html = response.read()
-            if len(html) > 0:
-                # Save page to cache
-                with open(cachefile, "w") as f:
-                    f.write(html)
-
-        soup = BeautifulSoup(html)
-        for link in soup.findAll('a'):
-            url = link.get('href')
-            if "bioguide.congress.gov" in url:
-                print_it(url)
-                bioguide_id = bioguide_id_from_url(url)
-
-                # Validate Bioguide ID
-                # One member's link didn't contain the ID: http://young.house.gov
-                if not bioguide_id_valid(bioguide_id):
-                    bioguide_id = None
-
-                break
+            try:
+                response = br.open(member_link["img_url"])
+            except HTTPError:
+                pass
+            else:
+                print member_link["img_url"]
+                # print response.read()
+                html = response.read()
+                if len(html) > 0:
+                    # Save page to cache
+                    with open(cachefile, "w") as f:
+                        f.write(html)
 
         # Resolve Bioguide ID against congress-legislators data
+        # all IDs now have to be resolved, but names seem more consistent
         if not bioguide_id:
-            print "Bioguide ID not found in page, resolving"
-            bioguide_id = resolve(legislators, member_link.text)
+            bioguide_id = resolve(legislators, member_link['name'])
 
             if not bioguide_id:
                 print "Bioguide ID not resolved"
@@ -328,34 +252,34 @@ def download_photos(br, member_links, outdir, cachedir, delay):
         # Download image
         if bioguide_id:
             print "Bioguide ID:", bioguide_id
-            image_tags = soup.findAll('img')
 
             # TODO: Fine for now as only one image on the page
-            for image in image_tags:
-                # TODO: Correct to assume jpg?
-                filename = os.path.join(outdir, bioguide_id + ".jpg")
-                if os.path.isfile(filename):
-                    print "Image already exists:", filename
-                elif not args.test:
-                    print "Saving image to", filename
-                    last_request_time = pause(last_request_time, delay)
-                    data = br.open(image['src']).read()
-                    br.back()
+
+            filename = os.path.join(outdir, bioguide_id + ".jpg")
+            if os.path.isfile(filename):
+                print "Image already exists:", filename
+            elif not args.test:
+                print "Saving image to", filename
+                last_request_time = pause(last_request_time, delay)
+                try:
+                    data = br.open(member_link['img_url']).read()
+                except HTTPError:
+                    print "Image not available"
+                else:
                     save = open(filename, 'wb')
                     save.write(data)
                     save.close()
                     save_metadata(bioguide_id)
-                break
 
-            # Remove this from our YAML list to prevent any bad resolutions later
-            legislators = remove_from_yaml(legislators, bioguide_id)
+        # Remove this from our YAML list to prevent any bad resolutions later
+        legislators = remove_from_yaml(legislators, bioguide_id)
 
     # TODO: For each entry remaining here, check if they've since left Congress.
     # If not, either need to add a resolving case above, or fix the GPO/YAML data.
     print "---"
     print "Didn't resolve Bioguide IDs:", len(todo_resolve)
     for member_link in todo_resolve:
-        print member_link.text, member_link.url
+        print member_link['img_url'], member_link['name']
 
 
 def resize_photos():
