@@ -108,6 +108,9 @@ def resolve(data, text):
         return "B001289"
     elif text == "Curson, David Alan":  # Really "Curzon, David Alan"
         return "C001089"
+    elif text == "Gutierrez, Luis": # missing accent in lastname
+	return "G000535"
+
 
     for item in data:
         bioguide = item['id']['bioguide']
