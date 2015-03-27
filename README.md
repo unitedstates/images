@@ -21,6 +21,11 @@ http://theunitedstates.io/images/congress/[size]/[bioguide].jpg
 
 We **cannot provide HTTPS permalinks** for these images, as Github Pages [does not support SSL](https://github.com/isaacs/github/issues/156). If you want to use these images on your website and worry about showing your users mixed content warnings, you'll need to host our images elsewhere. If this seems weird to you, [write Github support](mailto:support@github.com) to request SSL support for Github Pages.
 
+## Downloading all images of a particular size
+
+If you want to quickly grab all images of a particular size without cloning the entire repo (and have `svn` installed), you can just do something like this:
+
+`svn checkout https://github.com/unitedstates/images/trunk/congress/225x275`
 
 ## Gathering more photos
 
