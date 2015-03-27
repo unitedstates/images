@@ -8,7 +8,7 @@ Public domain images of members of the US Congress.
 Photos are available at predictable URLs, by size and Bioguide ID. Photos are served using Github Pages.
 
 ```
-http://theunitedstates.io/images/congress/[size]/[bioguide].jpg
+https://theunitedstates.io/images/congress/[size]/[bioguide].jpg
 ```
 
 `[size]` can be one of:
@@ -19,7 +19,7 @@ http://theunitedstates.io/images/congress/[size]/[bioguide].jpg
 
 `[bioguide]` must be a Bioguide ID. These are unique IDs for members of Congress, as defined by the [Congressional Bioguide](http://bioguide.congress.gov). They can be found and connected to many other Congressional datasets, including the partner dataset over at [unitedstates/congress-legislators](https://github.com/unitedstates/congress-legislators).
 
-We **cannot provide HTTPS permalinks** for these images, as Github Pages [does not support SSL](https://github.com/isaacs/github/issues/156). If you want to use these images on your website and worry about showing your users mixed content warnings, you'll need to host our images elsewhere. If this seems weird to you, [write Github support](mailto:support@github.com) to request SSL support for Github Pages.
+**Note:** Our HTTPS permalinks are provided through CloudFlare's [Universal SSL](https://blog.cloudflare.com/introducing-universal-ssl/), which also uses "Flexible SSL" to talk to GitHub Pages' unencrypted endpoints. So, you should know that it's not an end-to-end encrypted channel, but is encrypted between your client use and CloudFlare's servers (which at least should dissociate your requests from client IP addresses).
 
 ## Downloading all images of a particular size
 
