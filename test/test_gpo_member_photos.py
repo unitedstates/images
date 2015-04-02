@@ -202,6 +202,18 @@ class TestSequenceFunctions(unittest.TestCase):
         output = gpo_member_photos.resolve(self.yaml_data, text)
         self.assertEqual(output, "G000535")
 
+    def test_resolve__empty_text(self):
+        """ Test resolve special case """
+        text = "Gutierrez, Luis"
+        output = gpo_member_photos.resolve(self.yaml_data, "")
+        self.assertEqual(output, None)
+
+    def test_resolve__none(self):
+        """ Test resolve special case """
+        text = None
+        output = gpo_member_photos.resolve(self.yaml_data, "")
+        self.assertEqual(output, None)
+
 if __name__ == '__main__':
     unittest.main()
 
