@@ -10,9 +10,10 @@ python:
 
 # whitelist
 # gh-pages is otherwise ignored by Travis CI
+# Use a regex to whitelist gh-pages and all branches
 branches:
   only:
-    - gh-pages
+    - /.*/
 
 install:
   - pip install -r requirements.txt
