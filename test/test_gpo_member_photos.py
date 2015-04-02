@@ -184,6 +184,24 @@ class TestSequenceFunctions(unittest.TestCase):
         output = gpo_member_photos.resolve(self.yaml_data, text)
         self.assertEqual(output, "L000577")
 
+    def test_resolve__b001289(self):
+        """ Test resolve special case """
+        text = "Bradley, Byrne"
+        output = gpo_member_photos.resolve(self.yaml_data, text)
+        self.assertEqual(output, "B001289")
+
+    def test_resolve__c001089(self):
+        """ Test resolve special case """
+        text = "Curson, David Alan"
+        output = gpo_member_photos.resolve(self.yaml_data, text)
+        self.assertEqual(output, "C001089")
+
+    def test_resolve__g000535(self):
+        """ Test resolve special case """
+        text = "Gutierrez, Luis"
+        output = gpo_member_photos.resolve(self.yaml_data, text)
+        self.assertEqual(output, "G000535")
+
 if __name__ == '__main__':
     unittest.main()
 
