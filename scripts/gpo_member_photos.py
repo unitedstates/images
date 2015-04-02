@@ -14,14 +14,15 @@ import urlparse
 import json
 
 # pip install -r requirements.txt
-from bs4 import BeautifulSoup
 import mechanize
 import yaml
 from urllib2 import HTTPError
 
+
 # Windows cmd.exe cannot do Unicode so encode first
 def print_it(text):
     print(text.encode('utf-8'))
+
 
 def pause(last, delay):
     if last is None:
@@ -38,10 +39,10 @@ def pause(last, delay):
 
 
 def get_front_page(br, congress_number, delay):
-    
+
     print "Submit congress session number:", congress_number
 
-    #the JSON used to populate the memberguide site
+    # the JSON used to populate the memberguide site
     url = r'http://www.memberguide.gpoaccess.gov/Congressional.svc/GetMembers/{0}'.format(congress_number)
     links = []
 
@@ -50,9 +51,10 @@ def get_front_page(br, congress_number, delay):
     ######################################
     br.set_handle_robots(False)   # no robots
     br.set_handle_refresh(False)  # can sometimes hang without this
-    br.addheaders = [('User-agent', 'Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.0.1) Gecko/2008071615 Fedora/3.0.1-1.fc9 Firefox/3.0.1')]
+    br.addheaders = [('User-agent',
+                      'Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.0.1) '
+                      'Gecko/2008071615 Fedora/3.0.1-1.fc9 Firefox/3.0.1')]
 
-    
     response = br.open(url).read()
 
     if len(response) == 0:
@@ -69,13 +71,12 @@ def get_front_page(br, congress_number, delay):
                 "RP" in link):
                 # Include only delegates, a resident commissioner,
                 # representatives and senators.
-                # Exclude capitol, house and senate officials ("CO", "HO", "SO"),
+                # Exclude capitol, house & senate officials ("CO", "HO", "SO"),
                 # a president ("PR") and a vice-president ("VP") (8 in 113rd)
-                links.append({"img_url":link,"name":name})
-                #links will be a list of dictionaries
-                #where the "url" is a link to the image and "name" is the rep's name
-                
-                
+                links.append({"img_url": link, "name": name})
+                # links will be a list of dictionaries where the "url" is a
+                # link to the image and "name" is the rep's name
+
     print "Links:", len(links)
     return links
 
@@ -108,9 +109,8 @@ def resolve(data, text):
         return "B001289"
     elif text == "Curson, David Alan":  # Really "Curzon, David Alan"
         return "C001089"
-    elif text == "Gutierrez, Luis": # missing accent in lastname
-	return "G000535"
-
+    elif text == "Gutierrez, Luis":  # missing accent in lastname
+        return "G000535"
 
     for item in data:
         bioguide = item['id']['bioguide']
@@ -140,7 +140,8 @@ def resolve(data, text):
         elif wikipedia and wikipedia == text_reversed:
             return bioguide
 
-        # Check all of first name, then all letters but last, ..., then first letter
+        # Check all of first name, then all letters but last, ...,
+        # then first letter
         for i in reversed(range(len(first))):
             if text.startswith(last) and ", " + first[:i+1] in text:
                 return bioguide
@@ -158,16 +159,21 @@ def download_legislator_data():
     # clone it if it's not out
     if not os.path.exists("congress-legislators"):
         print "Cloning the congress-legislators repo..."
-        os.system("git clone -q --depth 1 https://github.com/unitedstates/congress-legislators congress-legislators")
+        os.system("git clone -q --depth 1 "
+                  "https://github.com/unitedstates/congress-legislators "
+                  "congress-legislators")
 
     # Update the repo so we have the latest.
     print "Updating the congress-legislators repo..."
-    # these two == git pull, but git pull ignores -q on the merge part so is less quiet
-    os.system("cd congress-legislators; git fetch -pq; git merge --ff-only -q origin/master")
+    # these two == git pull, but git pull ignores -q on the merge part
+    # so is less quiet
+    os.system("cd congress-legislators; git fetch -pq; "
+              "git merge --ff-only -q origin/master")
 
 
 def bioguide_id_from_url(url):
-    bioguide_id = urlparse.parse_qs(urlparse.urlparse(url).query)['index'][0].strip("/")
+    bioguide_id = urlparse.parse_qs(
+        urlparse.urlparse(url).query)['index'][0].strip("/")
     bioguide_id = str(bioguide_id.strip(u"\u200E"))
     bioguide_id = bioguide_id.capitalize()
     return bioguide_id
@@ -211,10 +217,12 @@ def download_photos(br, member_links, outdir, cachedir, delay):
 
     for i, member_link in enumerate(member_links):
         print "---"
-        print "Processing member", i+1, "of", len(member_links), ":", member_link["name"].encode('latin-1')
+        print("Processing member", i+1, "of", len(member_links), ":",
+              member_link["name"].encode('latin-1'))
         bioguide_id = None
 
-        cachefile = os.path.join(cachedir, member_link["img_url"].replace("/", "_") + ".html")
+        cachefile = os.path.join(
+            cachedir, member_link["img_url"].replace("/", "_") + ".html")
         # print os.path.isfile(cachefile)
 
         html = ""
@@ -274,8 +282,9 @@ def download_photos(br, member_links, outdir, cachedir, delay):
         # Remove this from our YAML list to prevent any bad resolutions later
         legislators = remove_from_yaml(legislators, bioguide_id)
 
-    # TODO: For each entry remaining here, check if they've since left Congress.
-    # If not, either need to add a resolving case above, or fix the GPO/YAML data.
+    # TODO: For each entry remaining here, check if they've since left
+    # Congress. If not, either need to add a resolving case above, or fix the
+    # GPO/YAML data.
     print "---"
     print "Didn't resolve Bioguide IDs:", len(todo_resolve)
     for member_link in todo_resolve:
@@ -288,7 +297,8 @@ def resize_photos():
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="Scrape http://www.memberguide.gpoaccess.gov and save members' photos named after their Bioguide IDs",
+        description="Scrape http://www.memberguide.gpoaccess.gov and save "
+                    "members' photos named after their Bioguide IDs",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument(
         '-n', '--congress', default='113',
