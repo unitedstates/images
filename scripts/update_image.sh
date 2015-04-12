@@ -1,5 +1,5 @@
-# Usage: update_image.sh url bioguide_id
-# Example: ./update_image.sh https://cloud.githubusercontent.com/assets/3171982/7097441/ab606912-dfa3-11e4-8e1f-bb7c944fe877.jpg Y000066
+# Usage: scripts/update_image.sh url bioguide_id
+# Example: scripts/update_image.sh https://cloud.githubusercontent.com/assets/3171982/7097441/ab606912-dfa3-11e4-8e1f-bb7c944fe877.jpg Y000066
 
 # Download an original image, delete and create new thumbnails,
 # open its metadata file for editing, do some git things.
