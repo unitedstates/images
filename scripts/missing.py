@@ -6,6 +6,16 @@ Find missing images.
 import os
 import gpo_member_photos
 
+
+def file_exists(filename):
+    if not os.path.exists(filename):
+        print "---"
+        print "Not found:", filename
+        print l['name']
+        return False
+    return True
+
+
 if __name__ == "__main__":
     # clone or update legislator YAML
     gpo_member_photos.download_legislator_data()
@@ -15,9 +25,9 @@ if __name__ == "__main__":
     for l in legislators:
         bioguide = l['id']['bioguide']
         filename = os.path.join("congress", "original", bioguide + ".jpg")
-        if not os.path.exists(filename):
-            print "---"
-            print "Not found:", filename
-            print l['name']
+        if file_exists(filename):
+            # Only check for yaml if jpg exists
+            filename = os.path.join("congress", "metadata", bioguide + ".yaml")
+            file_exists(filename)
 
 # End of file
