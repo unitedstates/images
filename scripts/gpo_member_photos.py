@@ -10,14 +10,23 @@ import datetime
 import os
 import re
 import sys
-import time
-import urlparse
 import json
+import time
+try:
+    # Python 3
+    from urllib.error import HTTPError
+    from urllib.parse import parse_qs
+    from urllib.parse import urlparse
+except ImportError:
+    # Python 2
+    from urllib2 import HTTPError
+    from urlparse import parse_qs
+    from urlparse import urlparse
 
 # pip install -r requirements.txt
 import mechanize
 import yaml
-from urllib2 import HTTPError
+
 
 
 # Windows cmd.exe cannot do Unicode so encode first
@@ -173,8 +182,8 @@ def download_legislator_data():
 
 
 def bioguide_id_from_url(url):
-    bioguide_id = urlparse.parse_qs(
-        urlparse.urlparse(url).query)['index'][0].strip("/")
+    bioguide_id = parse_qs(
+        urlparse(url).query)['index'][0].strip("/")
     bioguide_id = str(bioguide_id.strip(u"\u200E"))
     bioguide_id = bioguide_id.capitalize()
     return bioguide_id
