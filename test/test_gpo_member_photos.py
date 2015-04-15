@@ -65,25 +65,25 @@ class TestSequenceFunctions(unittest.TestCase):
 
     # Test bioguide_id_valid()
 
-    def test_bioguide_id_valid__None_returns_False(self):
+    def test_bioguide_id_valid__none_returns_false(self):
         """ Test with None """
         input = None
         output = gpo_member_photos.bioguide_id_valid(input)
         self.assertFalse(output)
 
-    def test_bioguide_id_valid__returns_True(self):
+    def test_bioguide_id_valid__returns_true(self):
         """ Test with a valid ID """
         input = "K000362"
         output = gpo_member_photos.bioguide_id_valid(input)
         self.assertTrue(output)
 
-    def test_bioguide_id_valid__returns_False(self):
+    def test_bioguide_id_valid__returns_false(self):
         """ Test with an invalid ID """
         input = "aK000362z"
         output = gpo_member_photos.bioguide_id_valid(input)
         self.assertFalse(output)
 
-    def test_bioguide_id_valid_url__returns_False(self):
+    def test_bioguide_id_valid_url__returns_false(self):
         """ Test with an invalid ID, an URL """
         input = "http://young.house.gov"
         output = gpo_member_photos.bioguide_id_valid(input)

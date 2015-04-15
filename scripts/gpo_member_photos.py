@@ -28,7 +28,6 @@ import mechanize
 import yaml
 
 
-
 # Windows cmd.exe cannot do Unicode so encode first
 def print_it(text):
     print(text.encode('utf-8'))
