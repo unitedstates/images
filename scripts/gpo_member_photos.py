@@ -4,19 +4,29 @@
 Scrape http://www.memberguide.gpoaccess.gov and
 save members' photos named after their Bioguide IDs.
 """
+from __future__ import print_function
 import argparse
 import datetime
 import os
 import re
 import sys
-import time
-import urlparse
 import json
+import time
+try:
+    # Python 3
+    from urllib.error import HTTPError
+    from urllib.parse import parse_qs
+    from urllib.parse import urlparse
+except ImportError:
+    # Python 2
+    from urllib2 import HTTPError
+    from urlparse import parse_qs
+    from urlparse import urlparse
 
 # pip install -r requirements.txt
 import mechanize
 import yaml
-from urllib2 import HTTPError
+
 
 
 # Windows cmd.exe cannot do Unicode so encode first
@@ -33,14 +43,14 @@ def pause(last, delay):
 
     if delta < delay:
         sleep = delay - delta
-        print "Sleep for", int(sleep), "seconds"
+        print("Sleep for", int(sleep), "seconds")
         time.sleep(sleep)
     return datetime.datetime.now()
 
 
 def get_front_page(br, congress_number, delay):
 
-    print "Submit congress session number:", congress_number
+    print("Submit congress session number:", congress_number)
 
     # the JSON used to populate the memberguide site
     url = r'http://www.memberguide.gpoaccess.gov/Congressional.svc/GetMembers/{0}'.format(congress_number)
@@ -77,7 +87,7 @@ def get_front_page(br, congress_number, delay):
                 # links will be a list of dictionaries where the "url" is a
                 # link to the image and "name" is the rep's name
 
-    print "Links:", len(links)
+    print("Links:", len(links))
     return links
 
 
@@ -158,13 +168,13 @@ def reverse_names(text):
 def download_legislator_data():
     # clone it if it's not out
     if not os.path.exists("congress-legislators"):
-        print "Cloning the congress-legislators repo..."
+        print("Cloning the congress-legislators repo...")
         os.system("git clone -q --depth 1 "
                   "https://github.com/unitedstates/congress-legislators "
                   "congress-legislators")
 
     # Update the repo so we have the latest.
-    print "Updating the congress-legislators repo..."
+    print("Updating the congress-legislators repo...")
     # these two == git pull, but git pull ignores -q on the merge part
     # so is less quiet
     os.system("cd congress-legislators; git fetch -pq; "
@@ -172,8 +182,8 @@ def download_legislator_data():
 
 
 def bioguide_id_from_url(url):
-    bioguide_id = urlparse.parse_qs(
-        urlparse.urlparse(url).query)['index'][0].strip("/")
+    bioguide_id = parse_qs(
+        urlparse(url).query)['index'][0].strip("/")
     bioguide_id = str(bioguide_id.strip(u"\u200E"))
     bioguide_id = bioguide_id.capitalize()
     return bioguide_id
@@ -206,7 +216,7 @@ def save_metadata(bioguide_id):
 
 def download_photos(br, member_links, outdir, cachedir, delay):
     last_request_time = None
-    print "Found a total of", len(member_links), "member links"
+    print("Found a total of", len(member_links), "member links")
     if not os.path.exists(outdir):
         os.makedirs(outdir)
     if not os.path.exists(cachedir):
@@ -216,14 +226,14 @@ def download_photos(br, member_links, outdir, cachedir, delay):
     legislators = load_yaml("congress-legislators/legislators-current.yaml")
 
     for i, member_link in enumerate(member_links):
-        print "---"
+        print("---")
         print("Processing member", i+1, "of", len(member_links), ":",
               member_link["name"].encode('latin-1'))
         bioguide_id = None
 
         cachefile = os.path.join(
             cachedir, member_link["img_url"].replace("/", "_") + ".html")
-        # print os.path.isfile(cachefile)
+        # print(os.path.isfile(cachefile))
 
         html = ""
 
@@ -240,8 +250,8 @@ def download_photos(br, member_links, outdir, cachedir, delay):
             except HTTPError:
                 pass
             else:
-                print member_link["img_url"]
-                # print response.read()
+                print(member_link["img_url"])
+                # print(response.read())
                 html = response.read()
                 if len(html) > 0:
                     # Save page to cache
@@ -254,25 +264,25 @@ def download_photos(br, member_links, outdir, cachedir, delay):
             bioguide_id = resolve(legislators, member_link['name'])
 
             if not bioguide_id:
-                print "Bioguide ID not resolved"
+                print("Bioguide ID not resolved")
                 todo_resolve.append(member_link)
 
         # Download image
         if bioguide_id:
-            print "Bioguide ID:", bioguide_id
+            print("Bioguide ID:", bioguide_id)
 
             # TODO: Fine for now as only one image on the page
 
             filename = os.path.join(outdir, bioguide_id + ".jpg")
             if os.path.isfile(filename):
-                print "Image already exists:", filename
+                print("Image already exists:", filename)
             elif not args.test:
-                print "Saving image to", filename
+                print("Saving image to", filename)
                 last_request_time = pause(last_request_time, delay)
                 try:
                     data = br.open(member_link['img_url']).read()
                 except HTTPError:
-                    print "Image not available"
+                    print("Image not available")
                 else:
                     save = open(filename, 'wb')
                     save.write(data)
@@ -285,10 +295,10 @@ def download_photos(br, member_links, outdir, cachedir, delay):
     # TODO: For each entry remaining here, check if they've since left
     # Congress. If not, either need to add a resolving case above, or fix the
     # GPO/YAML data.
-    print "---"
-    print "Didn't resolve Bioguide IDs:", len(todo_resolve)
+    print("---")
+    print("Didn't resolve Bioguide IDs:", len(todo_resolve))
     for member_link in todo_resolve:
-        print member_link['img_url'], member_link['name']
+        print(member_link['img_url'], member_link['name'])
 
 
 def resize_photos():
