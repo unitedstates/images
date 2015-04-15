@@ -111,6 +111,9 @@ def get_value(item, key1, key2):
 
 
 def resolve(data, text):
+    if text is None:
+        return None
+
     if isinstance(text, str):
         text = text.decode('utf-8')
 
