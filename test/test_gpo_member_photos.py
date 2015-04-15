@@ -212,7 +212,7 @@ class TestSequenceFunctions(unittest.TestCase):
     def test_resolve__none(self):
         """ Test resolve special case """
         text = None
-        output = gpo_member_photos.resolve(self.yaml_data, "")
+        output = gpo_member_photos.resolve(self.yaml_data, text)
         self.assertEqual(output, None)
 
 if __name__ == '__main__':
