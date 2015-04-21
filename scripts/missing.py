@@ -3,15 +3,16 @@
 """
 Find missing images.
 """
+from __future__ import print_function
 import os
 import gpo_member_photos
 
 
 def file_exists(filename):
     if not os.path.exists(filename):
-        print "---"
-        print "Not found:", filename
-        print l['name']
+        print("---")
+        print("Not found:", filename)
+        print(l['name'])
         return False
     return True
 

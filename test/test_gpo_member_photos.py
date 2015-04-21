@@ -6,10 +6,14 @@ Run from root `images` dir:
 `python test/test_gpo_member_photos.py`
 """
 import sys
-import unittest
+try:
+    import unittest2 as unittest
+except ImportError:
+    import unittest
 
 sys.path.insert(0, 'scripts')
 import gpo_member_photos
+
 
 class TestSequenceFunctions(unittest.TestCase):
 
@@ -17,65 +21,69 @@ class TestSequenceFunctions(unittest.TestCase):
 
     def setUp(self):
         if self.yaml_data is None:
-            self.__class__.yaml_data = gpo_member_photos.load_yaml("test/legislators-test.yaml")
+            self.__class__.yaml_data = gpo_member_photos.load_yaml(
+                "test/legislators-test.yaml")
             self.assertTrue(len(self.yaml_data))
-
 
     # Test bioguide_id_from_url()
 
     def test_bioguide_id_from_url__last_char_not_slash(self):
         """ Test last char is not / """
-        input = "http://bioguide.congress.gov/scripts/biodisplay.pl?index=S001177/"
+        input = ("http://bioguide.congress.gov/scripts/biodisplay.pl"
+                 "?index=S001177/")
         output = gpo_member_photos.bioguide_id_from_url(input)
         self.assertNotEqual(output[-1], "/")
 
     def test_bioguide_id_from_url__last_char_not_slash2(self):
         """ Test last char is not / """
-        input = "http://bioguide.congress.gov/scripts/biodisplay.pl?index=S001177"
+        input = ("http://bioguide.congress.gov/scripts/biodisplay.pl"
+                 "?index=S001177")
         output = gpo_member_photos.bioguide_id_from_url(input)
         self.assertNotEqual(output[-1], "/")
 
     def test_bioguide_id_from_url__is_string(self):
         """ Test output is string """
-        input = "http://bioguide.congress.gov/scripts/biodisplay.pl?index=S001177/"
+        input = ("http://bioguide.congress.gov/scripts/biodisplay.pl"
+                 "?index=S001177/")
         output = gpo_member_photos.bioguide_id_from_url(input)
         self.assertIsInstance(output, str)
 
     def test_bioguide_id_from_url__uppercase(self):
         """ Test output is string """
-        input = "http://bioguide.congress.gov/scripts/biodisplay.pl?index=e000288/"
+        input = ("http://bioguide.congress.gov/scripts/biodisplay.pl"
+                 "?index=e000288/")
         output = gpo_member_photos.bioguide_id_from_url(input)
         self.assertEqual(output[0], "E")
 
     def test_bioguide_id_from_url_with_ltr_mark(self):
         """ For some reason, some new URL links end with
         Unicode Character 'LEFT-TO-RIGHT MARK' (U+200E) """
-        input = "http://bioguide.congress.gov/scripts/biodisplay.pl?index=g000386" + u"\u200E" + "/"
+        input = ("http://bioguide.congress.gov/scripts/biodisplay.pl"
+                 "?index=g000386" + u"\u200E" + "/")
         output = gpo_member_photos.bioguide_id_from_url(input)
         self.assertEqual(output, "G000386")
 
-
     # Test bioguide_id_valid()
 
-    def test_bioguide_id_valid__None_returns_False(self):
+    def test_bioguide_id_valid__none_returns_false(self):
         """ Test with None """
         input = None
         output = gpo_member_photos.bioguide_id_valid(input)
         self.assertFalse(output)
 
-    def test_bioguide_id_valid__returns_True(self):
+    def test_bioguide_id_valid__returns_true(self):
         """ Test with a valid ID """
         input = "K000362"
         output = gpo_member_photos.bioguide_id_valid(input)
         self.assertTrue(output)
 
-    def test_bioguide_id_valid__returns_False(self):
+    def test_bioguide_id_valid__returns_false(self):
         """ Test with an invalid ID """
         input = "aK000362z"
         output = gpo_member_photos.bioguide_id_valid(input)
         self.assertFalse(output)
 
-    def test_bioguide_id_valid_url__returns_False(self):
+    def test_bioguide_id_valid_url__returns_false(self):
         """ Test with an invalid ID, an URL """
         input = "http://young.house.gov"
         output = gpo_member_photos.bioguide_id_valid(input)
@@ -87,7 +95,6 @@ class TestSequenceFunctions(unittest.TestCase):
         output = gpo_member_photos.bioguide_id_valid(input)
         self.assertFalse(output)
 
-
     # Test remove_from_yaml()
 
     def test_remove_from_yaml__success(self):
@@ -95,7 +102,8 @@ class TestSequenceFunctions(unittest.TestCase):
         bioguide_id = "C000127"
         length_before = len(self.yaml_data)
 
-        self.yaml_data = gpo_member_photos.remove_from_yaml(self.yaml_data, bioguide_id)
+        self.yaml_data = gpo_member_photos.remove_from_yaml(self.yaml_data,
+                                                            bioguide_id)
         self.assertTrue(length_before > len(self.yaml_data))
         self.assertEqual(len(self.yaml_data) + 1, length_before)
 
@@ -103,9 +111,9 @@ class TestSequenceFunctions(unittest.TestCase):
         """ Test same size """
         bioguide_id = "NOT_THERE"
         length_before = len(self.yaml_data)
-        self.yaml_data = gpo_member_photos.remove_from_yaml(self.yaml_data, bioguide_id)
+        self.yaml_data = gpo_member_photos.remove_from_yaml(self.yaml_data,
+                                                            bioguide_id)
         self.assertEqual(len(self.yaml_data), length_before)
-
 
     # Test reverse_names()
 
@@ -114,7 +122,6 @@ class TestSequenceFunctions(unittest.TestCase):
         text = "Hagan, Kay R."
         output = gpo_member_photos.reverse_names(text)
         self.assertEqual(output, "Kay R. Hagan")
-
 
     # Test resolve()
 
@@ -141,12 +148,6 @@ class TestSequenceFunctions(unittest.TestCase):
         text = u"Velázquez, Nydia M."
         output = gpo_member_photos.resolve(self.yaml_data, text)
         self.assertEqual(output, "V000081")
-
-    def test_resolve__initial_dot_from_middle(self):
-        """ Test resolve """
-        text = "Kirk, Mark S."
-        output = gpo_member_photos.resolve(self.yaml_data, text)
-        self.assertEqual(output, "K000360")
 
     def test_resolve__initial_dot_from_middle(self):
         """ Test resolve """
@@ -204,14 +205,14 @@ class TestSequenceFunctions(unittest.TestCase):
 
     def test_resolve__empty_text(self):
         """ Test resolve special case """
-        text = "Gutierrez, Luis"
-        output = gpo_member_photos.resolve(self.yaml_data, "")
+        text = ""
+        output = gpo_member_photos.resolve(self.yaml_data, text)
         self.assertEqual(output, None)
 
     def test_resolve__none(self):
         """ Test resolve special case """
         text = None
-        output = gpo_member_photos.resolve(self.yaml_data, "")
+        output = gpo_member_photos.resolve(self.yaml_data, text)
         self.assertEqual(output, None)
 
 if __name__ == '__main__':
