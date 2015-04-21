@@ -13,4 +13,5 @@ rm congress/450x550/$2.jpg
 scripts/resize-photos.sh
 git status
 git add congress
+git status
 echo git commit -m \"Update $2 via \#
