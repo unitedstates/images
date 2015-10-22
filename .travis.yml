@@ -10,6 +10,7 @@ python:
   - 3.3
   - 3.2
   - pypy
+  - pypy3
 
 # whitelist
 # gh-pages is otherwise ignored by Travis CI
@@ -37,9 +38,5 @@ after_success:
 matrix:
   fast_finish: true
   allow_failures:
-    - python: 2.6
     - python: 3.2
-    - python: 3.3
-    - python: 3.4
-    - python: 3.5
-    - python: pypy
+    - python: pypy3
