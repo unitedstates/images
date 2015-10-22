@@ -4,7 +4,7 @@
 Scrape http://memberguide.gpo.gov and
 save members' photos named after their Bioguide IDs.
 """
-from __future__ import print_function
+from __future__ import print_function, unicode_literals
 import argparse
 import datetime
 import os
@@ -112,9 +112,6 @@ def get_value(item, key1, key2):
 def resolve(data, text):
     if text is None:
         return None
-
-    if isinstance(text, str):
-        text = text.decode('utf-8')
 
     # hardcoded special cases to deal with bad data in GPO
     if text == "Bradley, Byrne":  # Really "Byrne, Bradley"

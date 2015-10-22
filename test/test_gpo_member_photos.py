@@ -5,6 +5,7 @@ Unit tests for gpo_member_photos.py.
 Run from root `images` dir:
 `python test/test_gpo_member_photos.py`
 """
+from __future__ import print_function, unicode_literals
 import sys
 try:
     import unittest2 as unittest
@@ -163,7 +164,7 @@ class TestSequenceFunctions(unittest.TestCase):
 
     def test_resolve__remove_nickname_quotes(self):
         """ Test resolve """
-        text = str('Barr, Garland “Andy"')
+        text = 'Barr, Garland “Andy"'
         output = gpo_member_photos.resolve(self.yaml_data, text)
         self.assertEqual(output, "B001282")
 
