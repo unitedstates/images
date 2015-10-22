@@ -58,13 +58,13 @@ def get_front_page(br, congress_number, delay):
     ######################################
     # First, open the page to get the form
     ######################################
-    br.set_handle_robots(False)   # no robots
-    br.set_handle_refresh(False)  # can sometimes hang without this
+#     br.set_handle_robots(False)   # no robots
+#     br.set_handle_refresh(False)  # can sometimes hang without this
     br.addheaders = [('User-agent',
                       'Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.0.1) '
                       'Gecko/2008071615 Fedora/3.0.1-1.fc9 Firefox/3.0.1')]
 
-    response = br.open(url).read()
+    response = br.get(url).text
 
     if len(response) == 0:
         sys.exit("Page is blank. Try again later, you may have hit a limit.")
