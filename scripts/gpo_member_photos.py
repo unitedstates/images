@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Scrape http://www.memberguide.gpoaccess.gov and
+Scrape http://memberguide.gpo.gov and
 save members' photos named after their Bioguide IDs.
 """
 from __future__ import print_function
@@ -52,7 +52,7 @@ def get_front_page(br, congress_number, delay):
     print("Submit congress session number:", congress_number)
 
     # the JSON used to populate the memberguide site
-    url = r'http://www.memberguide.gpoaccess.gov/Congressional.svc/GetMembers/{0}'.format(congress_number)
+    url = r'http://memberguide.gpo.gov/Congressional.svc/GetMembers/{0}'.format(congress_number)
     links = []
 
     ######################################
@@ -309,11 +309,11 @@ def resize_photos():
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="Scrape http://www.memberguide.gpoaccess.gov and save "
+        description="Scrape http://memberguide.gpo.gov and save "
                     "members' photos named after their Bioguide IDs",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument(
-        '-n', '--congress', default='113',
+        '-n', '--congress', default='114',
         help="Congress session number, for example: 110, 111, 112, 113")
     parser.add_argument(
         '-c', '--cache', default='cache',
