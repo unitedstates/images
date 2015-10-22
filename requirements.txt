@@ -1,2 +1,2 @@
 PyYAML
-mechanize
+MechanicalSoup

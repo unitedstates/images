@@ -24,7 +24,7 @@ except ImportError:
     from urlparse import urlparse
 
 # pip install -r requirements.txt
-import mechanize
+import mechanicalsoup
 import yaml
 
 
@@ -335,7 +335,7 @@ if __name__ == "__main__":
     # clone or update legislator YAML
     download_legislator_data()
 
-    br = mechanize.Browser()
+    br = mechanicalsoup.Browser()
     member_links = get_front_page(br, args.congress, args.delay)
 
     download_photos(br, member_links, args.outdir, args.cache, args.delay)
