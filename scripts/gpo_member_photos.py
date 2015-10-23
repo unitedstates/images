@@ -4,7 +4,7 @@
 Scrape http://memberguide.gpo.gov and
 save members' photos named after their Bioguide IDs.
 """
-from __future__ import print_function
+from __future__ import print_function, unicode_literals
 import argparse
 import datetime
 import os
@@ -24,7 +24,7 @@ except ImportError:
     from urlparse import urlparse
 
 # pip install -r requirements.txt
-import mechanize
+import mechanicalsoup
 import yaml
 
 
@@ -58,13 +58,13 @@ def get_front_page(br, congress_number, delay):
     ######################################
     # First, open the page to get the form
     ######################################
-    br.set_handle_robots(False)   # no robots
-    br.set_handle_refresh(False)  # can sometimes hang without this
+#     br.set_handle_robots(False)   # no robots
+#     br.set_handle_refresh(False)  # can sometimes hang without this
     br.addheaders = [('User-agent',
                       'Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.0.1) '
                       'Gecko/2008071615 Fedora/3.0.1-1.fc9 Firefox/3.0.1')]
 
-    response = br.open(url).read()
+    response = br.get(url).text
 
     if len(response) == 0:
         sys.exit("Page is blank. Try again later, you may have hit a limit.")
@@ -112,9 +112,6 @@ def get_value(item, key1, key2):
 def resolve(data, text):
     if text is None:
         return None
-
-    if isinstance(text, str):
-        text = text.decode('utf-8')
 
     # hardcoded special cases to deal with bad data in GPO
     if text == "Bradley, Byrne":  # Really "Byrne, Bradley"
@@ -335,7 +332,7 @@ if __name__ == "__main__":
     # clone or update legislator YAML
     download_legislator_data()
 
-    br = mechanize.Browser()
+    br = mechanicalsoup.Browser()
     member_links = get_front_page(br, args.congress, args.delay)
 
     download_photos(br, member_links, args.outdir, args.cache, args.delay)

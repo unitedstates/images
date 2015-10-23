@@ -3,11 +3,13 @@ language: python
 sudo: false
 
 python:
-  - 2.6
   - 2.7
-  - 3.2
-  - 3.3
+  - 2.6
+  - 3.5
   - 3.4
+  - 3.3
+  - 3.2
+  - pypy3
   - pypy
 
 # whitelist
@@ -36,8 +38,4 @@ after_success:
 matrix:
   fast_finish: true
   allow_failures:
-    - python: 2.6
     - python: 3.2
-    - python: 3.3
-    - python: 3.4
-    - python: pypy
