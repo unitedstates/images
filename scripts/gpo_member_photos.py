@@ -17,11 +17,14 @@ try:
     from urllib.error import HTTPError
     from urllib.parse import parse_qs
     from urllib.parse import urlparse
+    from urllib.request import urlretrieve
 except ImportError:
     # Python 2
+    from urllib import urlretrieve
     from urllib2 import HTTPError
     from urlparse import parse_qs
     from urlparse import urlparse
+
 
 # pip install -r requirements.txt
 import mechanicalsoup
@@ -213,6 +216,11 @@ def save_metadata(bioguide_id):
         f.write("link: http://memberguide.gpo.gov\n")
 
 
+def download_file(url, outfile):
+#    img_url = img_url.encode("utf-8")
+    urlretrieve(url, outfile)
+
+
 def download_photos(br, member_links, outdir, cachedir, delay):
     last_request_time = None
     print("Found a total of", len(member_links), "member links")
@@ -245,13 +253,13 @@ def download_photos(br, member_links, outdir, cachedir, delay):
             # Open page with mechanize
             last_request_time = pause(last_request_time, delay)
             try:
-                response = br.open(member_link["img_url"])
+                response = br.get(member_link["img_url"])
             except HTTPError:
                 pass
             else:
                 print(member_link["img_url"])
-                # print(response.read())
-                html = response.read()
+                # print(response.text)
+                html = response.text
                 if len(html) > 0:
                     # Save page to cache
                     with open(cachefile, "w") as f:
@@ -279,13 +287,11 @@ def download_photos(br, member_links, outdir, cachedir, delay):
                 print("Saving image to", filename)
                 last_request_time = pause(last_request_time, delay)
                 try:
-                    data = br.open(member_link['img_url']).read()
+                    print(member_link['img_url'])
+                    download_file(member_link['img_url'], filename)
                 except HTTPError:
                     print("Image not available")
                 else:
-                    save = open(filename, 'wb')
-                    save.write(data)
-                    save.close()
                     save_metadata(bioguide_id)
 
         # Remove this from our YAML list to prevent any bad resolutions later
