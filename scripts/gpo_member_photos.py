@@ -217,7 +217,7 @@ def save_metadata(bioguide_id):
 
 
 def download_file(url, outfile):
-#    img_url = img_url.encode("utf-8")
+    """Download file at url to outfile"""
     urlretrieve(url, outfile)
 
 
