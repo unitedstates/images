@@ -2,6 +2,8 @@
 
 Public domain images of members of the US Congress.
 
+[![Build Status](https://travis-ci.org/unitedstates/images.svg?branch=gh-pages)](https://travis-ci.org/unitedstates/images)
+[![Coverage Status](https://coveralls.io/repos/unitedstates/images/badge.svg?branch=gh-pages&service=github)](https://coveralls.io/github/unitedstates/images?branch=gh-pages)
 
 ## Using the photos
 
