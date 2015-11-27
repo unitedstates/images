@@ -5,7 +5,7 @@ Public domain images of members of the US Congress.
 
 ## Using the photos
 
-Photos are available at predictable URLs, by size and Bioguide ID. Photos are served using Github Pages.
+Photos are available at predictable URLs, by size and Bioguide ID. Photos are served using GitHub Pages.
 
 ```
 https://theunitedstates.io/images/congress/[size]/[bioguide].jpg
