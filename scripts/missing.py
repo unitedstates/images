@@ -7,6 +7,9 @@ from __future__ import print_function
 import os
 import gpo_member_photos
 
+# pip install -r requirements.txt
+import yaml
+
 
 # Make sure we have the congress-legislators repository available.
 def download_legislator_data():

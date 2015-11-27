@@ -29,7 +29,6 @@ except ImportError:
 
 # pip install -r requirements.txt
 import mechanicalsoup
-import yaml
 
 
 def pause(last, delay):
