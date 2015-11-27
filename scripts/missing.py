@@ -5,7 +5,6 @@ Find missing images.
 """
 from __future__ import print_function
 import os
-import gpo_member_photos
 
 # pip install -r requirements.txt
 import yaml

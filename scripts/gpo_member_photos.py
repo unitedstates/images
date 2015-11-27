@@ -15,16 +15,12 @@ import time
 try:
     # Python 3
     from urllib.error import HTTPError
-    from urllib.parse import parse_qs
-    from urllib.parse import urlparse
     from urllib.parse import urlencode
     from urllib.request import urlretrieve
 except ImportError:
     # Python 2
     from urllib import urlretrieve
     from urllib2 import HTTPError
-    from urlparse import parse_qs
-    from urlparse import urlparse
     from urllib import urlencode
 
 # pip install -r requirements.txt
@@ -55,21 +51,26 @@ def get_photo_list(br, congress_number, delay):
         response = br.get(
             "https://www.congress.gov/search?"
             + urlencode({
-                "q": json.dumps({ "source": "members", "congress": str(congress_number) }),
+                "q": json.dumps(
+                    {"source": "members",
+                     "congress": str(congress_number)}),
                 "pageSize": 250,
                 "page": page,
                 })).text
 
         if len(response) == 0:
-            sys.exit("Page is blank. Try again later, you may have hit a limit.")
+            sys.exit("Page is blank. Try again later, you may have hit a "
+                     "limit.")
 
-        # Scan for links to Member pages and img tags. The link to the Congress.gov
-        # page uses the Member's Bioguide ID as the key, and the filename for the
-        # photo is the same file name found at memberguide.gpo.gov for the high
-        # resolution file.
+        # Scan for links to Member pages and img tags. The link to the
+        # Congress.gov page uses the Member's Bioguide ID as the key, and the
+        # filename for the photo is the same file name found at
+        # memberguide.gpo.gov for the high-resolution file.
         for bioguide_id, photo_file in re.findall("""<h2><a href="https://www.congress.gov/member/[^/]+/(\w+)\?resultIndex=\d+">[^<]+</a></h2>\s*<div class="memberImage"><img src="/img/member/([^"]+)\"""", response):
-            photo_file = photo_file.replace("_200.jpg", ".jpg") # this part is added by Congress.gov
-            if photo_file == bioguide_id.lower() + ".jpg": continue # not a file sourced from GPO
+            # this part is added by Congress.gov:
+            photo_file = photo_file.replace("_200.jpg", ".jpg")
+            if photo_file == bioguide_id.lower() + ".jpg":
+                continue  # not a file sourced from GPO
             yield (bioguide_id, photo_file)
 
         m = re.search("""<a class="next" id="pagebottom_next" href="([^"]+)">""", response)
@@ -105,6 +106,7 @@ def download_file(url, outfile):
         os.unlink(fn)
         raise HTTPError()
 
+
 def download_photos(br, photo_list, outdir, delay):
     last_request_time = None
 
@@ -114,7 +116,8 @@ def download_photos(br, photo_list, outdir, delay):
     ok = 0
 
     for bioguide_id, photo_filename in photo_list:
-        photo_url = "http://www.memberguide.gpo.gov/PictorialImages/" + photo_filename
+        photo_url = ("http://www.memberguide.gpo.gov/PictorialImages/" +
+                     photo_filename)
         print(bioguide_id, photo_url)
 
         filename = os.path.join(outdir, bioguide_id + ".jpg")
@@ -131,6 +134,7 @@ def download_photos(br, photo_list, outdir, delay):
                 ok += 1
 
     print("Downloaded", ok, "member photos.")
+
 
 def resize_photos():
     # Assumes they're congress/original/*.jpg
