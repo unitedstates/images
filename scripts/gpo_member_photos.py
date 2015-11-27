@@ -27,6 +27,14 @@ except ImportError:
 import mechanicalsoup
 
 
+regex1 = re.compile(
+    '<h2><a href="https://www.congress.gov/member/[^/]+/(\w+)\?'
+    'resultIndex=\d+">[^<]+</a></h2>\s*<div class="memberImage">'
+    '<img src="/img/member/([^"]+)\"')
+
+regex2 = re.compile('<a class="next" id="pagebottom_next" href="([^"]+)">')
+
+
 def pause(last, delay):
     if last is None:
         return datetime.datetime.now()
@@ -66,14 +74,14 @@ def get_photo_list(br, congress_number, delay):
         # Congress.gov page uses the Member's Bioguide ID as the key, and the
         # filename for the photo is the same file name found at
         # memberguide.gpo.gov for the high-resolution file.
-        for bioguide_id, photo_file in re.findall("""<h2><a href="https://www.congress.gov/member/[^/]+/(\w+)\?resultIndex=\d+">[^<]+</a></h2>\s*<div class="memberImage"><img src="/img/member/([^"]+)\"""", response):
+        for bioguide_id, photo_file in regex1.findall(response):
             # this part is added by Congress.gov:
             photo_file = photo_file.replace("_200.jpg", ".jpg")
             if photo_file == bioguide_id.lower() + ".jpg":
                 continue  # not a file sourced from GPO
             yield (bioguide_id, photo_file)
 
-        m = re.search("""<a class="next" id="pagebottom_next" href="([^"]+)">""", response)
+        m = regex2.search(response)
         if m:
             # fetch next page of results
             page += 1
