@@ -108,8 +108,8 @@ def download_file(url, outfile):
     # content on a 404. If we didn't get an image, kill the file
     # (since we already saved it, oops) and raise an exception.
     if info["Content-Type"] != "image/jpeg":
-        raise HTTPError()
         os.unlink(fn)
+        raise HTTPError()
 
 def download_photos(br, photo_list, outdir, delay):
     last_request_time = None
