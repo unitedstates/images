@@ -5,7 +5,33 @@ Find missing images.
 """
 from __future__ import print_function
 import os
-import gpo_member_photos
+
+# pip install -r requirements.txt
+import yaml
+
+
+# Make sure we have the congress-legislators repository available.
+def download_legislator_data():
+    # clone it if it's not out
+    if not os.path.exists("congress-legislators"):
+        print("Cloning the congress-legislators repo...")
+        os.system("git clone -q --depth 1 "
+                  "https://github.com/unitedstates/congress-legislators "
+                  "congress-legislators")
+
+    # Update the repo so we have the latest.
+    print("Updating the congress-legislators repo...")
+    # these two == git pull, but git pull ignores -q on the merge part
+    # so is less quiet
+    os.system("cd congress-legislators; git fetch -pq; "
+              "git merge --ff-only -q origin/master")
+
+
+def load_yaml(filename):
+    f = open(filename)
+    data = yaml.safe_load(f)
+    f.close()
+    return data
 
 
 def file_exists(filename):
@@ -19,9 +45,9 @@ def file_exists(filename):
 
 if __name__ == "__main__":
     # clone or update legislator YAML
-    gpo_member_photos.download_legislator_data()
+    download_legislator_data()
 
-    legislators = gpo_member_photos.load_yaml(
+    legislators = load_yaml(
         "congress-legislators/legislators-current.yaml")
     for l in legislators:
         bioguide = l['id']['bioguide']
