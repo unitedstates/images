@@ -2,9 +2,6 @@
 
 Public domain images of members of the US Congress.
 
-[![Build Status](https://travis-ci.org/unitedstates/images.svg?branch=gh-pages)](https://travis-ci.org/unitedstates/images)
-[![Coverage Status](https://coveralls.io/repos/unitedstates/images/badge.svg?branch=gh-pages&service=github)](https://coveralls.io/github/unitedstates/images?branch=gh-pages)
-
 ## Using the photos
 
 Photos are available at predictable URLs, by size and Bioguide ID. Photos are served using Github Pages.
@@ -30,6 +27,9 @@ If you want to quickly grab all images of a particular size without cloning the 
 `svn checkout https://github.com/unitedstates/images/trunk/congress/225x275`
 
 ## Gathering more photos
+
+[![Build Status](https://travis-ci.org/unitedstates/images.svg?branch=gh-pages)](https://travis-ci.org/unitedstates/images)
+[![Coverage Status](https://coveralls.io/repos/unitedstates/images/badge.svg?branch=gh-pages&service=github)](https://coveralls.io/github/unitedstates/images?branch=gh-pages)
 
 This project uses a Python script that scrapes the [Government Printing Office's Member Guide](http://memberguide.gpo.gov/) for official photos of Members of Congress. You can run the script to find and fetch new photos.
 
