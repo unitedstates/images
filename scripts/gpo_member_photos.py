@@ -57,8 +57,8 @@ def get_photo_list(br, congress_number, delay):
         # Fetch a page of results from Congress.gov.
         print("Page %d of Congress.gov Member listing..." % page)
         response = br.get(
-            "https://www.congress.gov/search?"
-            + urlencode({
+            "https://www.congress.gov/search?" +
+            urlencode({
                 "q": json.dumps(
                     {"source": "members",
                      "congress": str(congress_number)}),
