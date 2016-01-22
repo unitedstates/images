@@ -142,6 +142,7 @@ def download_photos(br, photo_list, outdir, delay):
                 ok += 1
 
     print("Downloaded", ok, "member photos.")
+    return ok
 
 
 def resize_photos():
@@ -170,8 +171,9 @@ if __name__ == "__main__":
     br = mechanicalsoup.Browser()
     photo_list = get_photo_list(br, args.congress, args.delay)
 
-    download_photos(br, photo_list, args.outdir, args.delay)
+    number = download_photos(br, photo_list, args.outdir, args.delay)
 
-    resize_photos()
+    if number:
+        resize_photos()
 
 # End of file
