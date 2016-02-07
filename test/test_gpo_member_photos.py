@@ -6,6 +6,7 @@ Run from root `images` dir:
 `python test/test_gpo_member_photos.py`
 """
 from __future__ import print_function, unicode_literals
+import datetime
 import os
 import sys
 try:
@@ -28,6 +29,24 @@ class TestSequenceFunctions(unittest.TestCase):
     def test_resize_photos(self):
         """ Test callable """
         gpo_member_photos.resize_photos()
+
+    def test_pause(self):
+        """ Test pause delays """
+        # Arrange
+        last_request_time = None
+        delay = 1
+        delta = datetime.timedelta(seconds=delay)
+
+        # Act
+        time0 = datetime.datetime.now()
+        last_request_time = gpo_member_photos.pause(last_request_time, delay)
+        time1 = datetime.datetime.now()
+        last_request_time = gpo_member_photos.pause(last_request_time, delay)
+        time2 = datetime.datetime.now()
+
+        # Assert
+        self.assertLess(time1-time0, delta)
+        self.assertGreaterEqual(time2-time1, delta)
 
 if __name__ == '__main__':
     unittest.main()

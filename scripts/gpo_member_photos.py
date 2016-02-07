@@ -57,8 +57,8 @@ def get_photo_list(br, congress_number, delay):
         # Fetch a page of results from Congress.gov.
         print("Page %d of Congress.gov Member listing..." % page)
         response = br.get(
-            "https://www.congress.gov/search?"
-            + urlencode({
+            "https://www.congress.gov/search?" +
+            urlencode({
                 "q": json.dumps(
                     {"source": "members",
                      "congress": str(congress_number)}),
@@ -142,6 +142,7 @@ def download_photos(br, photo_list, outdir, delay):
                 ok += 1
 
     print("Downloaded", ok, "member photos.")
+    return ok
 
 
 def resize_photos():
@@ -170,8 +171,9 @@ if __name__ == "__main__":
     br = mechanicalsoup.Browser()
     photo_list = get_photo_list(br, args.congress, args.delay)
 
-    download_photos(br, photo_list, args.outdir, args.delay)
+    number = download_photos(br, photo_list, args.outdir, args.delay)
 
-    resize_photos()
+    if number:
+        resize_photos()
 
 # End of file
