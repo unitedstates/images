@@ -7,6 +7,8 @@
 echo "URL:" $1
 echo "Bioguide ID:" $2
 echo "Issue number:" $3
+echo "name: "    > congress/metadata/$2.yaml
+echo "link: $1" >> congress/metadata/$2.yaml
 edit congress/metadata/$2.yaml
 wget $1 -O congress/original/$2.jpg
 rm congress/225x275/$2.jpg
