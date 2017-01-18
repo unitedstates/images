@@ -149,6 +149,7 @@ def resize_photos():
     # Assumes they're congress/original/*.jpg
     os.system(os.path.join("scripts", "resize-photos.sh"))
 
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Scrape http://memberguide.gpo.gov and save "
