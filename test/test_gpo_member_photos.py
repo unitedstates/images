@@ -48,6 +48,7 @@ class TestSequenceFunctions(unittest.TestCase):
         self.assertLess(time1-time0, delta)
         self.assertGreaterEqual(time2-time1, delta)
 
+
 if __name__ == '__main__':
     unittest.main()
 
