@@ -4,12 +4,10 @@ sudo: false
 
 python:
   - 2.7
-  - 2.6
   - 3.6
   - 3.5
   - 3.4
   - 3.3
-  - 3.2
   - pypy3
   - pypy
 
@@ -27,8 +25,8 @@ install:
   - if [ "$TRAVIS_PYTHON_VERSION" == "2.6" ]; then travis_retry pip install unittest2; fi
 
 script:
-  - coverage run --source scripts/gpo_member_photos.py test/test_gpo_member_photos.py
-  - python scripts/missing.py
+  - coverage run  --append --source scripts test/test_gpo_member_photos.py
+  - coverage run  --append --source scripts scripts/missing.py
 
 after_success:
   - coverage report
@@ -39,6 +37,3 @@ after_success:
 
 matrix:
   fast_finish: true
-  allow_failures:
-    - python: 2.6
-    - python: 3.2
