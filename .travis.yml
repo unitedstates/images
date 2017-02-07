@@ -4,12 +4,10 @@ sudo: false
 
 python:
   - 2.7
-  - 2.6
   - 3.6
   - 3.5
   - 3.4
   - 3.3
-  - 3.2
   - pypy3
   - pypy
 
@@ -39,6 +37,3 @@ after_success:
 
 matrix:
   fast_finish: true
-  allow_failures:
-    - python: 2.6
-    - python: 3.2
