@@ -18,6 +18,7 @@ python:
 # Use a regex to whitelist gh-pages and all branches
 branches:
   only:
+    - gh-pages
     - /.*/
 
 install:
