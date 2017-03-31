@@ -8,6 +8,8 @@ In this case, [open a ticket](https://github.com/unitedstates/images/issues/new)
 * A link to the image you're suggesting we incorporate, and to a page that displays that image.
 * Why you believe the image is definitely official and in the public domain.
 
+When submitting a PR for an image found outside of the GPO, use the URL for the **context** of the photo, not the image source URL, as the value for `link: ` in `metadata/*.yaml`.
+
 ## Public domain
 
 The project is in the public domain within the United States, and copyright and related rights in the work worldwide are waived through the [CC0 1.0 Universal public domain dedication][CC0].
