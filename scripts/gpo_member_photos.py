@@ -26,13 +26,14 @@ except ImportError:
 # pip install -r requirements.txt
 import mechanicalsoup
 
+USER_AGENT = ('Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 '
+              '(KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36')
 
 regex1 = re.compile(
-    '<h2><a href="https://www.congress.gov/member/[^/]+/(\w+)\?'
-    'resultIndex=\d+">[^<]+</a></h2>\s*<div class="memberImage">'
-    '<img src="/img/member/([^"]+)\"')
+    '<a href="https://www.congress.gov/member/[^/]+/(\w+)[^<]+</a></span>'
+    '[^<]*<div[^<]+<div class="member-image"><img src="/img/member/([^\"]+)"')
 
-regex2 = re.compile('<a class="next" id="pagebottom_next" href="([^"]+)">')
+regex2 = re.compile('<a class="next" href="([^"]+)">')
 
 
 def pause(last, delay):
@@ -170,6 +171,8 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     br = mechanicalsoup.Browser()
+    br.set_user_agent(USER_AGENT)
+
     photo_list = get_photo_list(br, args.congress, args.delay)
 
     number = download_photos(br, photo_list, args.outdir, args.delay)
