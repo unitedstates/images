@@ -9,10 +9,7 @@ from __future__ import print_function, unicode_literals
 import datetime
 import os
 import sys
-try:
-    import unittest2 as unittest
-except ImportError:
-    import unittest
+import unittest
 
 sys.path.insert(0, 'scripts')
 import gpo_member_photos
