@@ -31,7 +31,7 @@ If you want to quickly grab all images of a particular size without cloning the 
 [![Build Status](https://travis-ci.org/unitedstates/images.svg?branch=gh-pages)](https://travis-ci.org/unitedstates/images)
 [![Coverage Status](https://coveralls.io/repos/unitedstates/images/badge.svg?branch=gh-pages&service=github)](https://coveralls.io/github/unitedstates/images?branch=gh-pages)
 
-This project uses a Python script that scrapes the [Government Printing Office's Member Guide](http://memberguide.gpo.gov/) for official photos of Members of Congress. You can run the script to find and fetch new photos.
+This project uses a Python script that scrapes the [Government Printing Office's Member Guide](https://memberguide.gpo.gov/) for official photos of Members of Congress. You can run the script to find and fetch new photos.
 
 Install dependencies with:
 

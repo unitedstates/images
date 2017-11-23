@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Scrape http://memberguide.gpo.gov and
+Scrape https://memberguide.gpo.gov and
 save members' photos named after their Bioguide IDs.
 """
 from __future__ import print_function, unicode_literals
@@ -101,7 +101,7 @@ def save_metadata(bioguide_id):
     outfile = os.path.join(outdir, bioguide_id + ".yaml")
     with open(outfile, "w") as f:
         f.write("name: GPO Member Guide\n")
-        f.write("link: http://memberguide.gpo.gov\n")
+        f.write("link: https://memberguide.gpo.gov\n")
 
 
 def download_file(url, outfile):
@@ -125,7 +125,7 @@ def download_photos(br, photo_list, outdir, delay):
     ok = 0
 
     for bioguide_id, photo_filename in photo_list:
-        photo_url = ("http://www.memberguide.gpo.gov/PictorialImages/" +
+        photo_url = ("https://memberguide.gpo.gov/PictorialImages/" +
                      photo_filename)
         print(bioguide_id, photo_url)
 
@@ -153,7 +153,7 @@ def resize_photos():
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="Scrape http://memberguide.gpo.gov and save "
+        description="Scrape https://memberguide.gpo.gov and save "
                     "members' photos named after their Bioguide IDs",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument(
