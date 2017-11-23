@@ -1,2 +1,2 @@
 PyYAML
-MechanicalSoup
+MechanicalSoup>=0.8.0
