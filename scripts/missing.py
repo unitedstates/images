@@ -3,7 +3,6 @@
 """
 Find missing images.
 """
-from __future__ import print_function
 import os
 
 # pip install -r requirements.txt

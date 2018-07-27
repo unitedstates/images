@@ -3,12 +3,10 @@ language: python
 sudo: false
 
 python:
-  - 2.7
   - 3.6
   - 3.5
   - 3.4
   - pypy3
-  - pypy
 
 # whitelist
 # gh-pages is otherwise ignored by Travis CI
