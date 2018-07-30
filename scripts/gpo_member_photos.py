@@ -4,24 +4,16 @@
 Scrape https://memberguide.gpo.gov and
 save members' photos named after their Bioguide IDs.
 """
-from __future__ import print_function, unicode_literals
 import argparse
 import datetime
+import json
 import os
 import re
 import sys
-import json
 import time
-try:
-    # Python 3
-    from urllib.error import HTTPError
-    from urllib.parse import urlencode
-    from urllib.request import urlretrieve
-except ImportError:
-    # Python 2
-    from urllib import urlretrieve
-    from urllib2 import HTTPError
-    from urllib import urlencode
+from urllib.error import HTTPError
+from urllib.parse import urlencode
+from urllib.request import urlretrieve
 
 # pip install -r requirements.txt
 import mechanicalsoup
