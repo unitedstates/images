@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 Scrape https://memberguide.gpo.gov and
 save members' photos named after their Bioguide IDs.
@@ -22,7 +21,7 @@ USER_AGENT = ('Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 '
               '(KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36')
 
 regex1 = re.compile(
-    '<a href="https://www.congress.gov/member/[^/]+/(\w+)[^<]+</a></span>'
+    r'<a href="https://www.congress.gov/member/[^/]+/(\w+)[^<]+</a></span>'
     '[^<]*<div[^<]+<div class="member-image"><img src="/img/member/([^\"]+)"')
 
 regex2 = re.compile('<a class="next" href="([^"]+)">')
