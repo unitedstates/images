@@ -17,12 +17,15 @@ from urllib.request import urlretrieve
 # pip install -r requirements.txt
 import mechanicalsoup
 
-USER_AGENT = ('Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 '
-              '(KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36')
+USER_AGENT = (
+    "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 "
+    "(KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36"
+)
 
 regex1 = re.compile(
     r'<a href="https://www.congress.gov/member/[^/]+/(\w+)[^<]+</a></span>'
-    '[^<]*<div[^<]+<div class="member-image"><img src="/img/member/([^\"]+)"')
+    '[^<]*<div[^<]+<div class="member-image"><img src="/img/member/([^"]+)"'
+)
 
 regex2 = re.compile('<a class="next" href="([^"]+)">')
 
@@ -49,18 +52,20 @@ def get_photo_list(br, congress_number, delay):
         # Fetch a page of results from Congress.gov.
         print("Page %d of Congress.gov Member listing..." % page)
         response = br.get(
-            "https://www.congress.gov/search?" +
-            urlencode({
-                "q": json.dumps(
-                    {"source": "members",
-                     "congress": str(congress_number)}),
-                "pageSize": 250,
-                "page": page,
-                })).text
+            "https://www.congress.gov/search?"
+            + urlencode(
+                {
+                    "q": json.dumps(
+                        {"source": "members", "congress": str(congress_number)}
+                    ),
+                    "pageSize": 250,
+                    "page": page,
+                }
+            )
+        ).text
 
         if len(response) == 0:
-            sys.exit("Page is blank. Try again later, you may have hit a "
-                     "limit.")
+            sys.exit("Page is blank. Try again later, you may have hit a limit.")
 
         # Scan for links to Member pages and img tags. The link to the
         # Congress.gov page uses the Member's Bioguide ID as the key, and the
@@ -116,8 +121,7 @@ def download_photos(br, photo_list, outdir, delay):
     ok = 0
 
     for bioguide_id, photo_filename in photo_list:
-        photo_url = ("https://memberguide.gpo.gov/PictorialImages/" +
-                     photo_filename)
+        photo_url = "https://memberguide.gpo.gov/PictorialImages/" + photo_filename
         print(bioguide_id, photo_url)
 
         filename = os.path.join(outdir, bioguide_id + ".jpg")
@@ -145,20 +149,35 @@ def resize_photos():
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Scrape https://memberguide.gpo.gov and save "
-                    "members' photos named after their Bioguide IDs",
-        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+        "members' photos named after their Bioguide IDs",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+    )
     parser.add_argument(
-        '-n', '--congress', default='114',
-        help="Congress session number, for example: 110, 111, 112, 113")
+        "-n",
+        "--congress",
+        default="114",
+        help="Congress session number, for example: 110, 111, 112, 113",
+    )
     parser.add_argument(
-        '-o', '--outdir', default="congress/original",
-        help="Directory to save photos in")
+        "-o",
+        "--outdir",
+        default="congress/original",
+        help="Directory to save photos in",
+    )
     parser.add_argument(
-        '-d', '--delay', type=int, default=5, metavar='seconds',
-        help="Rate-limiting delay between scrape requests")
+        "-d",
+        "--delay",
+        type=int,
+        default=5,
+        metavar="seconds",
+        help="Rate-limiting delay between scrape requests",
+    )
     parser.add_argument(
-        '-t', '--test', action='store_true',
-        help="Test mode: don't actually save images")
+        "-t",
+        "--test",
+        action="store_true",
+        help="Test mode: don't actually save images",
+    )
     args = parser.parse_args()
 
     br = mechanicalsoup.Browser()

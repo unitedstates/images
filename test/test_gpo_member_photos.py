@@ -9,12 +9,11 @@ import os
 import sys
 import unittest
 
-sys.path.insert(0, 'scripts')
+sys.path.insert(0, "scripts")
 import gpo_member_photos
 
 
 class TestSequenceFunctions(unittest.TestCase):
-
     def test_save_metadata(self):
         """ Test file is saved """
         bioguide_id = "A000000"
@@ -40,11 +39,11 @@ class TestSequenceFunctions(unittest.TestCase):
         time2 = datetime.datetime.now()
 
         # Assert
-        self.assertLess(time1-time0, delta)
-        self.assertGreaterEqual(time2-time1, delta)
+        self.assertLess(time1 - time0, delta)
+        self.assertGreaterEqual(time2 - time1, delta)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
 
 # End of file
