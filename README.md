@@ -1,5 +1,7 @@
 # Images of Congress
 
+[![DOI](https://zenodo.org/badge/16810726.svg)](https://zenodo.org/badge/latestdoi/16810726)
+
 Public domain images of members of the US Congress.
 
 ## Using the photos
