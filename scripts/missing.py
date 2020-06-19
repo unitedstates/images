@@ -40,7 +40,7 @@ def file_exists(filename):
     if not os.path.exists(filename):
         print("---")
         print("Not found:", filename)
-        print(l["name"])
+        print(legislator["name"])
         return False
     return True
 
@@ -50,8 +50,8 @@ if __name__ == "__main__":
     download_legislator_data()
 
     legislators = load_yaml("congress-legislators/legislators-current.yaml")
-    for l in legislators:
-        bioguide = l["id"]["bioguide"]
+    for legislator in legislators:
+        bioguide = legislator["id"]["bioguide"]
         filename = os.path.join("congress", "original", bioguide + ".jpg")
         if file_exists(filename):
             # Only check for yaml if jpg exists
