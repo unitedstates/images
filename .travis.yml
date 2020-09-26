@@ -4,6 +4,7 @@ cache: pip
 matrix:
   fast_finish: true
   include:
+    - python: 3.9-dev
     - python: 3.8
     - python: 3.7
     - python: 3.6
@@ -18,16 +19,12 @@ branches:
 
 install:
   - pip install -r requirements.txt
-  - pip install black coveralls flake8
+  - pip install black coveralls
 
 script:
-  - coverage run  --append --source scripts test/test_gpo_member_photos.py
-  - coverage run  --append --source scripts scripts/missing.py
-  - black --check --diff .
-  - flake8 scripts
+  - coverage run --append --source scripts test/test_gpo_member_photos.py
+  - coverage run --append --source scripts scripts/missing.py
 
 after_success:
   - coverage report
   - coveralls
-  - pip install pycodestyle
-  - pycodestyle scripts/*.py
