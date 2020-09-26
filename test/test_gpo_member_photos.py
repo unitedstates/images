@@ -10,7 +10,7 @@ import sys
 import unittest
 
 sys.path.insert(0, "scripts")
-import gpo_member_photos
+import gpo_member_photos  # noqa: E402
 
 
 class TestSequenceFunctions(unittest.TestCase):
