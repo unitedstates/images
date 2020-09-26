@@ -26,3 +26,9 @@ repos:
     rev: v1.6.0
     hooks:
       - id: python-check-blanket-noqa
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v3.2.0
+    hooks:
+      - id: check-merge-conflict
+      - id: check-yaml
