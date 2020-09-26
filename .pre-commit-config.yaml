@@ -32,3 +32,4 @@ repos:
     hooks:
       - id: check-merge-conflict
       - id: check-yaml
+      - id: end-of-file-fixer
