@@ -42,8 +42,8 @@ repo (and have `svn` installed), you can just do something like this:
 
 ## Gathering more photos
 
-[![Build Status](https://travis-ci.org/unitedstates/images.svg?branch=gh-pages)](https://travis-ci.org/unitedstates/images)
-[![Coverage Status](https://coveralls.io/repos/unitedstates/images/badge.svg?branch=gh-pages&service=github)](https://coveralls.io/github/unitedstates/images?branch=gh-pages)
+[![GitHub Actions status](https://github.com/unitedstates/images/workflows/Test/badge.svg)](https://github.com/unitedstates/images/actions)
+[![codecov](https://codecov.io/gh/unitedstates/images/branch/master/graph/badge.svg)](https://codecov.io/gh/unitedstates/images)
 
 This project uses a Python script that scrapes the
 [Government Printing Office's Member Guide](https://memberguide.gpo.gov/) for official
