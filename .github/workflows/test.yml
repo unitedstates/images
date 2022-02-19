@@ -35,6 +35,7 @@ jobs:
           coverage run  --append --source scripts test/test_gpo_member_photos.py
           coverage run  --append --source scripts scripts/missing.py
           coverage report
+          coverage xml
 
       - name: Upload coverage
         uses: codecov/codecov-action@v2
