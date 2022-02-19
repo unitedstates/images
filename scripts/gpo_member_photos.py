@@ -23,7 +23,7 @@ USER_AGENT = (
 )
 
 regex1 = re.compile(
-    r'<a href="https://www.congress.gov/member/[^/]+/(\w+)[^<]+</a></span>'
+    r'<a href="/member/[^/]+/(\w+)[^<]+</a></span>'
     '[^<]*<div[^<]+<div class="member-image"><img src="/img/member/([^"]+)"'
 )
 
