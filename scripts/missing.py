@@ -24,8 +24,7 @@ def download_legislator_data():
     # these two == git pull, but git pull ignores -q on the merge part
     # so is less quiet
     os.system(
-        "cd congress-legislators; git fetch -pq; "
-        "git merge --ff-only -q origin/master"
+        "cd congress-legislators; git fetch -pq; git merge --ff-only -q origin/main"
     )
 
 

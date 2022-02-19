@@ -43,7 +43,7 @@ repo (and have `svn` installed), you can just do something like this:
 ## Gathering more photos
 
 [![GitHub Actions status](https://github.com/unitedstates/images/workflows/Test/badge.svg)](https://github.com/unitedstates/images/actions)
-[![codecov](https://codecov.io/gh/unitedstates/images/branch/master/graph/badge.svg)](https://codecov.io/gh/unitedstates/images)
+[![codecov](https://codecov.io/gh/unitedstates/images/branch/gh-pages/graph/badge.svg)](https://codecov.io/gh/unitedstates/images)
 
 This project uses a Python script that scrapes the
 [Government Printing Office's Member Guide](https://memberguide.gpo.gov/) for official
