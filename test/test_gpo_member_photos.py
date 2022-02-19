@@ -15,17 +15,17 @@ import gpo_member_photos  # noqa: E402
 
 class TestSequenceFunctions(unittest.TestCase):
     def test_save_metadata(self):
-        """ Test file is saved """
+        """Test file is saved"""
         bioguide_id = "A000000"
         gpo_member_photos.save_metadata(bioguide_id)
         self.assertTrue(os.path.exists("congress/metadata/A000000.yaml"))
 
     def test_resize_photos(self):
-        """ Test callable """
+        """Test callable"""
         gpo_member_photos.resize_photos()
 
     def test_pause(self):
-        """ Test pause delays """
+        """Test pause delays"""
         # Arrange
         last_request_time = None
         delay = 1
