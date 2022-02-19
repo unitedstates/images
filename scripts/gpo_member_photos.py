@@ -39,7 +39,7 @@ def pause(last, delay):
 
     if delta < delay:
         sleep = delay - delta
-        print("Sleep for", int(sleep), "seconds")
+        print(f"Sleep for {sleep} seconds")
         time.sleep(sleep)
     return datetime.datetime.now()
 
@@ -50,7 +50,7 @@ def get_photo_list(br, congress_number, delay):
     page = 1
     while True:
         # Fetch a page of results from Congress.gov.
-        print("Page %d of Congress.gov Member listing..." % page)
+        print(f"Page {page} of Congress.gov Member listing...")
         response = br.get(
             "https://www.congress.gov/search?"
             + urlencode(
