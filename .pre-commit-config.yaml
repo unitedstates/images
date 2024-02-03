@@ -3,13 +3,13 @@ repos:
     rev: v3.15.0
     hooks:
       - id: pyupgrade
-        args: [--py37-plus]
+        args: [--py38-plus]
 
   - repo: https://github.com/psf/black-pre-commit-mirror
     rev: 24.1.1
     hooks:
       - id: black
-        args: [--target-version=py37]
+        args: [--target-version=py38]
 
   - repo: https://github.com/PyCQA/isort
     rev: 5.13.2
