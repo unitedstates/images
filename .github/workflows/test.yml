@@ -38,13 +38,14 @@ jobs:
           coverage xml
 
       - name: Upload coverage
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v3.1.5
         with:
           name: Python ${{ matrix.python-version }}
 
   success:
     needs: test
     runs-on: ubuntu-latest
+    name: Test successful
     steps:
       - name: Success
         run: echo Test successful
