@@ -8,14 +8,14 @@ import datetime
 import json
 import os
 import re
-import sys
 import time
 from urllib.error import HTTPError
-from urllib.parse import urlencode
 from urllib.request import urlretrieve
 
 # pip install -r requirements.txt
 import mechanicalsoup
+
+CURRENT_CONGRESS = 118
 
 USER_AGENT = (
     "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 "
@@ -44,50 +44,38 @@ def pause(last, delay):
     return datetime.datetime.now()
 
 
-def get_photo_list(br, congress_number, delay):
-    last_request_time = None
+def get_members_pictorial(br, congress_number):
+    """
+    Get members for the given congress_number
+    API documentation: https://pictorialapi.gpo.gov/index.html
+    """
+    response = br.get(
+        f"https://pictorialapi.gpo.gov/api/GuideMember/GetMembers/{congress_number}"
+    ).json()
+    return [
+        member
+        for member in response["memberCollection"]
+        if member["memberType"] in ("Senator", "Representative")
+        and member["name"] != "Vacant, Vacant"
+    ]
 
-    page = 1
-    while True:
-        # Fetch a page of results from Congress.gov.
-        print(f"Page {page} of Congress.gov Member listing...")
-        response = br.get(
-            "https://www.congress.gov/search?"
-            + urlencode(
-                {
-                    "q": json.dumps(
-                        {"source": "members", "congress": str(congress_number)}
-                    ),
-                    "pageSize": 250,
-                    "page": page,
-                }
-            )
-        ).text
 
-        if len(response) == 0:
-            sys.exit("Page is blank. Try again later, you may have hit a limit.")
-
-        # Scan for links to Member pages and img tags. The link to the
-        # Congress.gov page uses the Member's Bioguide ID as the key, and the
-        # filename for the photo is the same file name found at
-        # memberguide.gpo.gov for the high-resolution file.
-        for bioguide_id, photo_file in regex1.findall(response):
-            # this part is added by Congress.gov:
-            photo_file = photo_file.replace("_200.jpg", ".jpg")
-            if photo_file == bioguide_id.lower() + ".jpg":
-                continue  # not a file sourced from GPO
-            yield (bioguide_id, photo_file)
-
-        m = regex2.search(response)
-        if m:
-            # fetch next page of results
-            page += 1
-            continue
-        else:
-            # this was the last page (no Next link)
-            break
-
-        last_request_time = pause(last_request_time, delay)
+def get_legislators_current(br, include_historical=False):
+    """
+    Download legislators from sister project unitedstates/congress-legislators
+    Optionally also include historical legislators (which significantly
+    increases the download size)
+    """
+    legislators = br.get(
+        "https://theunitedstates.io/congress-legislators/legislators-current.json"
+    ).json()
+    if include_historical:
+        historical = br.get(
+            "https://theunitedstates.io/congress-legislators/"
+            "legislators-historical.json"
+        ).json()
+        legislators += historical
+    return legislators
 
 
 def save_metadata(bioguide_id):
@@ -97,7 +85,7 @@ def save_metadata(bioguide_id):
     outfile = os.path.join(outdir, bioguide_id + ".yaml")
     with open(outfile, "w") as f:
         f.write("name: GPO Member Guide\n")
-        f.write("link: https://memberguide.gpo.gov\n")
+        f.write("link: https://pictorial.gpo.gov\n")
 
 
 def download_file(url, outfile):
@@ -120,8 +108,7 @@ def download_photos(br, photo_list, outdir, delay):
 
     ok = 0
 
-    for bioguide_id, photo_filename in photo_list:
-        photo_url = "https://memberguide.gpo.gov/PictorialImages/" + photo_filename
+    for bioguide_id, photo_url in photo_list:
         print(bioguide_id, photo_url)
 
         filename = os.path.join(outdir, bioguide_id + ".jpg")
@@ -148,14 +135,15 @@ def resize_photos():
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="Scrape https://memberguide.gpo.gov and save "
-        "members' photos named after their Bioguide IDs",
+        description="Save members' photos from pictorialapi.gpo.gov, named "
+        "after their Bioguide IDs",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     parser.add_argument(
         "-n",
         "--congress",
-        default="114",
+        default=CURRENT_CONGRESS,
+        type=int,
         help="Congress session number, for example: 110, 111, 112, 113",
     )
     parser.add_argument(
@@ -183,11 +171,42 @@ if __name__ == "__main__":
     br = mechanicalsoup.Browser()
     br.set_user_agent(USER_AGENT)
 
-    photo_list = get_photo_list(br, args.congress, args.delay)
+    legislators_current = get_legislators_current(br, args.congress != CURRENT_CONGRESS)
+    members_pictorial = get_members_pictorial(br, args.congress)
+
+    photo_list = []
+    errors = []
+    for m in legislators_current:
+        image_found = False
+        if "pictorial" in m["id"]:
+            try:
+                pictorial_data = next(
+                    p
+                    for p in members_pictorial
+                    if p["memberId"] == m["id"]["pictorial"]
+                )
+
+                if "nophotoimage.jpg" in pictorial_data["imageUrl"]:
+                    pass
+                else:
+                    image_found = True
+                    photo_list.append((m["id"]["bioguide"], pictorial_data["imageUrl"]))
+            except StopIteration:
+                # No matching result from pictorial API
+                pass
+
+        if not image_found:
+            print(f"No photo available for {m['id']['bioguide']}")
+            errors.append(["No photo available", m["id"]["bioguide"], m["name"]])
 
     number = download_photos(br, photo_list, args.outdir, args.delay)
 
     if number:
         resize_photos()
+
+    if len(errors):
+        print(f"{len(errors)} legislators had errors. Details wrote to errors.json")
+        with open("errors.json", "w") as f:
+            json.dump(errors, f, indent=2)
 
 # End of file
