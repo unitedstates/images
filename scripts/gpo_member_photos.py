@@ -67,7 +67,7 @@ def get_legislators_current(br, include_historical=False):
     increases the download size)
     """
     legislators = br.get(
-        "https://theunitedstates.io/congress-legislators/legislators-current.json"
+        "https://unitedstates.github.io/congress-legislators/legislators-current.json"
     ).json()
     if include_historical:
         historical = br.get(
