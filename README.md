@@ -10,7 +10,7 @@ Photos are available at predictable URLs, by size and Bioguide ID. Photos are se
 using GitHub Pages.
 
 ```
-https://theunitedstates.io/images/congress/[size]/[bioguide].jpg
+https://unitedstates.github.io/images/congress/[size]/[bioguide].jpg
 ```
 
 `[size]` can be one of:
