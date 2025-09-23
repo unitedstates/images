@@ -187,6 +187,14 @@ if __name__ == "__main__":
         help="API key for authentication (if required for congress.gov API)",
     )
     parser.add_argument(
+        "-s",
+        "--skip-members",
+        nargs="+",
+        type=str.lower,
+        default=[],
+        help="List of bioguide IDs to skip",
+    )
+    parser.add_argument(
         "-t",
         "--test",
         action="store_true",
@@ -203,6 +211,11 @@ if __name__ == "__main__":
     photo_list = []
     errors = []
     for m in legislators_current:
+        #skip if in skip list
+        if "bioguide" in m["id"] and m["id"]["bioguide"].lower() in args.skip_members:
+            print(f"Skipping {m['name']}, [{m['id']['bioguide']}]")
+            continue
+        
         image_found = False
         if "pictorial" in m["id"]:
             try:
