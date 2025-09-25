@@ -133,17 +133,21 @@ def download_photos(br, photo_list, outdir, delay):
     print("Downloaded", ok, "member photos.")
     return ok
 
+
 def get_congress_gov_photo_url(bioguide_id, api_key):
     """
     Get the photo URL for a member using their bioguide id via the Congress.gov API.
     API documentation: https://api.congress.gov/
     """
     response = br.get(
-        f"https://api.congress.gov/v3/member/{bioguide_id}",
-        params={"api_key": api_key}
+        f"https://api.congress.gov/v3/member/{bioguide_id}", params={"api_key": api_key}
     ).json()
     # Check member, depiction, imageUrl tree of keys
-    if "member" in response and "depiction" in response["member"] and "imageUrl" in response["member"]["depiction"]:
+    if (
+        "member" in response
+        and "depiction" in response["member"]
+        and "imageUrl" in response["member"]["depiction"]
+    ):
         # cut the "_200" width from the URL to get the full-size image
         return response["member"]["depiction"]["imageUrl"].replace("_200", "")
     return None
@@ -211,11 +215,11 @@ if __name__ == "__main__":
     photo_list = []
     errors = []
     for m in legislators_current:
-        #skip if in skip list
+        # skip if in skip list
         if "bioguide" in m["id"] and m["id"]["bioguide"].lower() in args.skip_members:
             print(f"Skipping {m['name']}, [{m['id']['bioguide']}]")
             continue
-        
+
         image_found = False
         if "pictorial" in m["id"]:
             try:
@@ -229,7 +233,9 @@ if __name__ == "__main__":
                     pass
                 else:
                     image_found = True
-                    photo_list.append((m["id"]["bioguide"], pictorial_data["imageUrl"], "gpo"))
+                    photo_list.append(
+                        (m["id"]["bioguide"], pictorial_data["imageUrl"], "gpo")
+                    )
             except StopIteration:
                 # No matching result from pictorial API
                 pass
@@ -246,7 +252,12 @@ if __name__ == "__main__":
             print(f"No photo available for {m['id']['bioguide']}")
             errors.append(["No photo available", m["id"]["bioguide"], m["name"]])
 
-    number = download_photos(br, photo_list, args.outdir, args.delay,)
+    number = download_photos(
+        br,
+        photo_list,
+        args.outdir,
+        args.delay,
+    )
 
     if number:
         resize_photos()
