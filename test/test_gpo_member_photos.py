@@ -4,6 +4,7 @@ Unit tests for gpo_member_photos.py.
 Run from root `images` dir:
 `python test/test_gpo_member_photos.py`
 """
+
 import datetime
 import os
 import sys
