@@ -3,6 +3,7 @@
 Scrape https://memberguide.gpo.gov and
 save members' photos named after their Bioguide IDs.
 """
+
 import argparse
 import datetime
 import json
