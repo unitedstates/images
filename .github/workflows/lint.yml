@@ -2,11 +2,10 @@ name: Lint
 
 on: [push, pull_request, workflow_dispatch]
 
+permissions: {}
+
 env:
   FORCE_COLOR: 1
-
-permissions:
-  contents: read
 
 jobs:
   lint:
@@ -14,7 +13,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v6
-      - uses: actions/setup-python@v6
         with:
-          python-version: "3.x"
-      - uses: pre-commit/action@v3.0.1
+          persist-credentials: false
+      - uses: j178/prek-action@v2
