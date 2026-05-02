@@ -18,7 +18,7 @@ class TestSequenceFunctions(unittest.TestCase):
     def test_save_metadata(self):
         """Test file is saved"""
         bioguide_id = "A000000"
-        gpo_member_photos.save_metadata(bioguide_id)
+        gpo_member_photos.save_metadata(bioguide_id, "gpo")
         self.assertTrue(os.path.exists("congress/metadata/A000000.yaml"))
 
     def test_resize_photos(self):

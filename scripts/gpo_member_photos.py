@@ -79,14 +79,20 @@ def get_legislators_current(br, include_historical=False):
     return legislators
 
 
-def save_metadata(bioguide_id):
+def save_metadata(bioguide_id, photo_source):
     outdir = "congress/metadata"
     if not os.path.exists(outdir):
         os.makedirs(outdir)
     outfile = os.path.join(outdir, bioguide_id + ".yaml")
     with open(outfile, "w") as f:
-        f.write("name: GPO Member Guide\n")
-        f.write("link: https://pictorial.gpo.gov\n")
+        if photo_source == "gpo":
+            f.write("source: GPO Member Guide\n")
+            f.write("source_url: https://pictorial.gpo.gov\n")
+        elif photo_source == "congress":
+            f.write("source: Congress.gov API\n")
+            f.write("source_url: https://api.congress.gov/\n")
+        else:
+            f.write("source: Unknown\n")
 
 
 def download_file(url, outfile):
@@ -109,7 +115,7 @@ def download_photos(br, photo_list, outdir, delay):
 
     ok = 0
 
-    for bioguide_id, photo_url in photo_list:
+    for bioguide_id, photo_url, photo_source in photo_list:
         print(bioguide_id, photo_url)
 
         filename = os.path.join(outdir, bioguide_id + ".jpg")
@@ -122,11 +128,30 @@ def download_photos(br, photo_list, outdir, delay):
             except HTTPError as e:
                 print("Image not available:", e)
             else:
-                save_metadata(bioguide_id)
+                save_metadata(bioguide_id, photo_source)
                 ok += 1
 
     print("Downloaded", ok, "member photos.")
     return ok
+
+
+def get_congress_gov_photo_url(bioguide_id, api_key):
+    """
+    Get the photo URL for a member using their bioguide id via the Congress.gov API.
+    API documentation: https://api.congress.gov/
+    """
+    response = br.get(
+        f"https://api.congress.gov/v3/member/{bioguide_id}", params={"api_key": api_key}
+    ).json()
+    # Check member, depiction, imageUrl tree of keys
+    if (
+        "member" in response
+        and "depiction" in response["member"]
+        and "imageUrl" in response["member"]["depiction"]
+    ):
+        # cut the "_200" width from the URL to get the full-size image
+        return response["member"]["depiction"]["imageUrl"].replace("_200", "")
+    return None
 
 
 def resize_photos():
@@ -162,6 +187,19 @@ if __name__ == "__main__":
         help="Rate-limiting delay between scrape requests",
     )
     parser.add_argument(
+        "-k",
+        "--key",
+        help="API key for authentication (if required for congress.gov API)",
+    )
+    parser.add_argument(
+        "-s",
+        "--skip-members",
+        nargs="+",
+        type=str.lower,
+        default=[],
+        help="List of bioguide IDs to skip",
+    )
+    parser.add_argument(
         "-t",
         "--test",
         action="store_true",
@@ -178,6 +216,11 @@ if __name__ == "__main__":
     photo_list = []
     errors = []
     for m in legislators_current:
+        # skip if in skip list
+        if "bioguide" in m["id"] and m["id"]["bioguide"].lower() in args.skip_members:
+            print(f"Skipping {m['name']}, [{m['id']['bioguide']}]")
+            continue
+
         image_found = False
         if "pictorial" in m["id"]:
             try:
@@ -191,16 +234,31 @@ if __name__ == "__main__":
                     pass
                 else:
                     image_found = True
-                    photo_list.append((m["id"]["bioguide"], pictorial_data["imageUrl"]))
+                    photo_list.append(
+                        (m["id"]["bioguide"], pictorial_data["imageUrl"], "gpo")
+                    )
             except StopIteration:
                 # No matching result from pictorial API
                 pass
+
+        # Try congress.gov ID depiction if pictorial ID not found
+        # and we have a congress.gov ID
+        if not image_found and args.key:
+            image = get_congress_gov_photo_url(m["id"]["bioguide"], args.key)
+            if image:
+                image_found = True
+                photo_list.append((m["id"]["bioguide"], image, "congress"))
 
         if not image_found:
             print(f"No photo available for {m['id']['bioguide']}")
             errors.append(["No photo available", m["id"]["bioguide"], m["name"]])
 
-    number = download_photos(br, photo_list, args.outdir, args.delay)
+    number = download_photos(
+        br,
+        photo_list,
+        args.outdir,
+        args.delay,
+    )
 
     if number:
         resize_photos()
